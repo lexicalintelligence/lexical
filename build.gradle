@@ -1,0 +1,60 @@
+defaultTasks 'eclipse'
+
+apply plugin: 'java'
+
+subprojects {
+	defaultTasks 'build'
+
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+	
+	version = '0.1-SNAPSHOT'
+	ext.isReleaseVersion = !version.endsWith("SNAPSHOT")
+
+	group = 'com.lexicalintelligence'	
+	
+	repositories {
+		mavenCentral()		
+	}
+
+	dependencies {
+		testCompile 'junit:junit:[4.10,)'
+	}
+
+	javadoc {
+		options.addStringOption("sourcepath", "src/main/java")
+		exclude '**/schema/**'
+	}
+	
+	sourceSets {
+		main {
+			resources {
+				srcDir 'src/main/java'
+			}
+		}
+		test {
+			resources {
+				srcDir 'src/test/java'
+			} 
+		}
+	}
+
+	task sourcesJar(type: Jar, dependsOn:classes) {
+		classifier = 'sources'
+		from sourceSets.main.allSource
+	}
+	
+	artifacts {
+		archives jar
+		archives sourcesJar
+	}
+	
+	compileJava {
+		options.debug = true
+		options.debugOptions.debugLevel = "source,lines,vars"
+	}
+
+}
