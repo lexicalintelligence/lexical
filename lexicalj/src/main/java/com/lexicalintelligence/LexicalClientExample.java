@@ -16,11 +16,15 @@
 
 package com.lexicalintelligence;
 
+import java.util.List;
+
 public class LexicalClientExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:8080/indexer/mesh");
-		System.out.println(lexical.process("lung and brain cancer"));
-		
+
+		LexicalClient lexical = new LexicalClient("https://nlp.lexicalintelligence.com/indexer/mesh");
+
+		List<LexicalEntry> entries = lexical.process("Happiness is the key to better health.");
+
+		entries.stream().map(entry -> entry.getName()).forEach(System.out::println);
 	}
-	
 }

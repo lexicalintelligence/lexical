@@ -46,40 +46,41 @@ public class LexicalClient {
 	private static HttpClient httpClient = HttpClientBuilder.create().build();
 	private static Type type = new TypeToken<Map<String, List<Map<String, Object>>>>() {
 	}.getType();
-	
+
 	private String url;
 	private Gson gson;
 	private JsonParser parser;
-	
+
 	public LexicalClient(String url) {
+		System.setProperty("jsse.enableSNIExtension", "false");
 		this.url = url;
 		gson = new Gson();
 		parser = new JsonParser();
 	}
-	
+
 	public List<LexicalEntry> process(String text) {
 		if (text == null) {
 			return Collections.emptyList();
 		}
-		
+
 		List<LexicalEntry> result = new ArrayList<>();
 		HttpPost post = new HttpPost(url);
-		
+
 		List<NameValuePair> params = new ArrayList<NameValuePair>(1);
 		if (text != null) {
 			params.add(new BasicNameValuePair("text", text));
 		}
-		
+
 		Reader reader = null;
 		try {
 			post.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse response = httpClient.execute(post);
 			reader = new InputStreamReader(response.getEntity().getContent(), "UTF8");
-			
+
 			JsonObject obj = parser.parse(reader).getAsJsonObject();
-			
+
 			Map<String, List<Map<String, Object>>> jsmap = gson.fromJson(obj, type);
-			
+
 			if (jsmap != null) {
 				List<Map<String, Object>> entries = jsmap.get("entries");
 				if (entries != null) {
