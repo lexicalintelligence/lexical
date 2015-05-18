@@ -1,3 +1,19 @@
+/*
+ * Copyright 2015 Lexical Intelligence, LLC.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.lexicalintelligence;
 
 import java.io.IOException;
@@ -5,10 +21,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,33 +44,31 @@ import com.google.gson.reflect.TypeToken;
 public class LexicalClient {
 	protected final Log log = LogFactory.getLog(LexicalClient.class);
 	private static HttpClient httpClient = HttpClientBuilder.create().build();
-	private static Type type = new TypeToken<Map<String, List<Map<String, String>>>>() {
+	private static Type type = new TypeToken<Map<String, List<Map<String, Object>>>>() {
 	}.getType();
 	
 	private String url;
 	private Gson gson;
+	private JsonParser parser;
 	
 	public LexicalClient(String url) {
-		this.url = url; // + "/process";
+		this.url = url;
 		gson = new Gson();
+		parser = new JsonParser();
 	}
 	
-	public Map<Integer, Double> index(String title, String text) {
-		Map<Integer, Double> result = new HashMap<>();
+	public List<LexicalEntry> process(String text) {
+		if (text == null) {
+			return Collections.emptyList();
+		}
+		
+		List<LexicalEntry> result = new ArrayList<>();
 		HttpPost post = new HttpPost(url);
 		
 		List<NameValuePair> params = new ArrayList<NameValuePair>(1);
-		if (title != null) {
-			//params.add(new BasicNameValuePair("title", title));
-		}
 		if (text != null) {
 			params.add(new BasicNameValuePair("text", text));
-			params.add(new BasicNameValuePair("text", "what the"));
 		}
-		params.add(new BasicNameValuePair("extractConcepts", "true"));
-		params.add(new BasicNameValuePair("expandAbbreviations", "true"));
-		params.add(new BasicNameValuePair("expandCoordinations", "true"));
-		params.add(new BasicNameValuePair("filterNegations", "true"));
 		
 		Reader reader = null;
 		try {
@@ -62,41 +76,19 @@ public class LexicalClient {
 			HttpResponse response = httpClient.execute(post);
 			reader = new InputStreamReader(response.getEntity().getContent(), "UTF8");
 			
-			JsonParser parser = new JsonParser();
 			JsonObject obj = parser.parse(reader).getAsJsonObject();
-			Map<String, List<Map<String, String>>> jsmap = gson.fromJson(obj, type);
+			
+			Map<String, List<Map<String, Object>>> jsmap = gson.fromJson(obj, type);
 			
 			if (jsmap != null) {
-				List<Map<String, String>> concepts = jsmap.get("text");
-				double maxCount = 0.0;
-				if (concepts != null) {
-					for (Map<String, String> concept : concepts) {
-						Integer cui = Integer.valueOf(concept.get("cui"));
-						Double count = result.get(cui);
-						count = count == null ? 1 : count + 1;
-						maxCount = Math.max(maxCount, count);
-						result.put(cui, count);
-					}
-				}
-				else {
-					maxCount = 1.0;
-				}
-				concepts = jsmap.get("title");
-				if (concepts != null) {
-					for (Map<String, String> concept : concepts) {
-						Integer cui = Integer.valueOf(concept.get("cui"));
-						result.put(cui, maxCount);
-					}
-				}
-				if (maxCount > 1) {
-					maxCount = Math.sqrt(maxCount);
-					for (Entry<Integer, Double> entry : result.entrySet()) {
-						result.put(entry.getKey(), Math.sqrt(entry.getValue()) / maxCount);
-					}
+				List<Map<String, Object>> entries = jsmap.get("entries");
+				if (entries != null) {
+					return entries.stream().map(entry -> LexicalEntry.create(entry)).collect(Collectors.toList());
 				}
 			}
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			log.error(e);
 		}
 		finally {
