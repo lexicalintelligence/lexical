@@ -4,7 +4,7 @@
 .mtj.tmp/
 
 # Package Files #
-*.jar
+# *.jar
 *.war
 *.ear
 *.classpath
@@ -15,6 +15,7 @@
 # Gradle
 .gradle
 
+build/
 */build/
 */bin/
 
