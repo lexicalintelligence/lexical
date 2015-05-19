@@ -20,11 +20,11 @@ import java.util.List;
 
 public class LexicalClientExample {
 	public static void main(String[] args) {
-
+		
 		LexicalClient lexical = new LexicalClient("https://nlp.lexicalintelligence.com/indexer/mesh");
 
 		List<LexicalEntry> entries = lexical.process("Happiness is the key to better health.");
-
+		
 		entries.stream().map(entry -> entry.getName()).forEach(System.out::println);
 	}
 }

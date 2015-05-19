@@ -1,0 +1,72 @@
+if (hasProperty('sonatypeUsername')) {
+	apply plugin: 'maven'
+	apply plugin: 'maven-publish'
+	apply plugin: 'signing'
+
+	task javadocJar(type: Jar, dependsOn: javadoc) {
+		classifier = 'javadoc'
+		from 'build/docs/javadoc'
+	}
+
+	artifacts {
+		archives jar
+		archives sourcesJar
+		archives javadocJar
+	}
+
+	signing {
+		required { gradle.taskGraph.hasTask("uploadArchives"); }
+		sign configurations.archives
+	}
+
+	uploadArchives {
+		repositories {
+			mavenDeployer {
+				beforeDeployment {
+					MavenDeployment deployment -> signing.signPom(deployment)
+				}
+
+				if (project.ext.isReleaseVersion) {
+					repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2/") {
+						authentication(userName: sonatypeUsername, password: sonatypePassword)
+					}
+				}
+				else {
+					repository(url: "https://oss.sonatype.org/content/repositories/snapshots/") {
+						authentication(userName: sonatypeUsername, password: sonatypePassword)
+					}
+				}
+		
+				pom.project {
+					url 'http://lexicalintelligence.com'
+
+					licenses {
+						license {
+							name 'The Apache Software License, Version 2.0'
+							url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+							distribution 'repo'
+						}
+					}
+
+					developers {
+						developer {
+							id 'kbaker'
+							name 'Kirk Baker'
+						}
+					}
+
+					scm {
+						url 'https://github.com/lexicalintelligence/lexical.git'
+						connection 'https://github.com/lexicalintelligence/lexical.git'
+						developerConnection 'https://github.com/lexicalintelligence/lexical.git'
+					}
+					name "$project.name"
+					description '$project.description'
+				}
+			}
+		}
+	}
+}
+else {
+	println("No username given.  To specify run gradle with -PsonatypeUsername=username -PsonatypePassword=password")
+}

@@ -1,7 +1,10 @@
+apply from: '../maven.gradle'
+
 description 'Lexical client'
 
 dependencies {
   compile 'org.apache.httpcomponents:httpclient:4.4.1'
   compile 'com.google.code.gson:gson:2.3.1'
   compile 'commons-logging:commons-logging:1.2'
+  // compile 'commons-io:commons-io:2.4'
 }
