@@ -16,18 +16,20 @@
 
 package com.lexicalintelligence;
 
-public class LexicalClientExample {
-	public static void main(String[] args) {
-		// Connection to lexical server
-		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/lexicon/mesh");
-		
-		// Text to be processed
-		LexicalRequest lexicalRequest = new LexicalRequest("Happiness and health");
-		
-		// Response from the server
-		LexicalResponse lexicalResponse = lexicalClient.process(lexicalRequest);
-		
-		// Process the response
-		lexicalResponse.getEntries().stream().forEach(System.out::println);
+import java.util.Collections;
+import java.util.List;
+
+public class LexicalResponse {
+	private List<LexicalEntry> entries = Collections.emptyList();
+	
+	public LexicalResponse setEntries(List<LexicalEntry> entries) {
+		if (entries != null) {
+			this.entries = entries;
+		}
+		return this;
+	}
+	
+	public List<LexicalEntry> getEntries() {
+		return entries;
 	}
 }

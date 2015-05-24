@@ -21,7 +21,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -52,43 +51,47 @@ public class LexicalClient {
 	private JsonParser parser;
 	
 	public LexicalClient(String url) {
-		System.setProperty("jsse.enableSNIExtension", "false");
 		this.url = url + "/extract";
 		gson = new Gson();
 		parser = new JsonParser();
 	}
 	
-	public List<LexicalEntry> process(String text) {
-		if (text == null) {
-			return Collections.emptyList();
+	public LexicalResponse process(LexicalRequest lexicalRequest) {
+		LexicalResponse lexicalResponse = new LexicalResponse();
+		if (lexicalRequest == null) {
+			return lexicalResponse;
 		}
 		
 		List<LexicalEntry> result = new ArrayList<>();
 		HttpPost post = new HttpPost(url);
-
-		List<NameValuePair> params = new ArrayList<NameValuePair>(1);
-		if (text != null) {
-			params.add(new BasicNameValuePair("text", text));
-		}
+		
+		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
+		params.add(new BasicNameValuePair("text", lexicalRequest.getText()));
+		params.add(new BasicNameValuePair("expandAbbreviations", String.valueOf(lexicalRequest.isExpandAbbreviations())));
+		params.add(new BasicNameValuePair("expandCoordinations", String.valueOf(lexicalRequest.isExpandCoordinations())));
+		params.add(new BasicNameValuePair("detectNegation", String.valueOf(lexicalRequest.isDetectNegations())));
+		params.add(new BasicNameValuePair("checkSpelling", String.valueOf(lexicalRequest.isCheckSpelling())));
+		params.add(new BasicNameValuePair("extractEntitites", String.valueOf(lexicalRequest.isExtractEntities())));
 		
 		Reader reader = null;
 		try {
 			post.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse response = httpClient.execute(post);
 			reader = new InputStreamReader(response.getEntity().getContent(), "UTF8");
-
+			
+			//System.out.println(IOUtils.toString(reader));
+			
 			JsonObject obj = parser.parse(reader).getAsJsonObject();
 			
 			Map<String, List<Map<String, Object>>> jsmap = gson.fromJson(obj, type);
 			
 			if (jsmap != null) {
 				List<Map<String, Object>> entries = jsmap.get("entries");
-				if (entries != null) {
-					return entries.stream().map(entry -> LexicalEntry.create(entry)).collect(Collectors.toList());
-				}
+				lexicalResponse.setEntries(entries.stream().map(entry -> LexicalEntry.create(entry)).collect(Collectors.toList()));
 			}
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			log.error(e);
 		}
 		finally {
@@ -100,6 +103,6 @@ public class LexicalClient {
 				}
 			}
 		}
-		return result;
+		return lexicalResponse;
 	}
 }
