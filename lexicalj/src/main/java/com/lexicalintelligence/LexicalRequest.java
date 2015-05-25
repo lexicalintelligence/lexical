@@ -74,6 +74,7 @@ public class LexicalRequest {
 	
 	/**
 	 * @param text the text to set
+	 * @return this
 	 */
 	public LexicalRequest setText(String text) {
 		if (text != null) {
@@ -84,7 +85,8 @@ public class LexicalRequest {
 	
 	/**
 	 * @param expandAbbreviations the expandAbbreviations to set
-	 */
+	 * @return this
+	*/
 	public LexicalRequest setExpandAbbreviations(boolean expandAbbreviations) {
 		this.expandAbbreviations = expandAbbreviations;
 		return this;
@@ -92,7 +94,8 @@ public class LexicalRequest {
 	
 	/**
 	 * @param expandCoordinations the expandCoordinations to set
-	 */
+	 * @return this
+	*/
 	public LexicalRequest setExpandCoordinations(boolean expandCoordinations) {
 		this.expandCoordinations = expandCoordinations;
 		return this;
@@ -100,6 +103,7 @@ public class LexicalRequest {
 	
 	/**
 	 * @param detectNegations the detectNegations to set
+	 * @return this
 	 */
 	public LexicalRequest setDetectNegations(boolean detectNegations) {
 		this.detectNegations = detectNegations;
@@ -108,15 +112,17 @@ public class LexicalRequest {
 	
 	/**
 	 * @param checkSpelling the checkSpelling to set
-	 */
+	 * @return this
+	*/
 	public LexicalRequest setCheckSpelling(boolean checkSpelling) {
 		this.checkSpelling = checkSpelling;
 		return this;
 	}
 	
 	/**
-	 * @param extractConcepts the extractConcepts to set
-	 */
+	 * @param extractEntities the extractEntities to set
+	 * @return this
+	*/
 	public LexicalRequest setExtractEntities(boolean extractEntities) {
 		this.extractEntities = extractEntities;
 		return this;
