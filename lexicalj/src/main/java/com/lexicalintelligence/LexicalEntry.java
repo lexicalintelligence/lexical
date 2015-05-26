@@ -67,8 +67,8 @@ public class LexicalEntry {
 		lexicalEntry.id = (int) Double.parseDouble(String.valueOf(map.get("id"))); // this is ugly
 		lexicalEntry.start = (int) Double.parseDouble(String.valueOf(map.get("start")));
 		lexicalEntry.end = (int) Double.parseDouble(String.valueOf(map.get("end")));
-		if (map.get("semanticTypes") != null) {
-			lexicalEntry.semanticTypes = (List<String>) map.get("semanticTypes");
+		if (map.get("type") != null) {
+			lexicalEntry.semanticTypes = (List<String>) map.get("type");
 		}
 		return lexicalEntry;
 	}

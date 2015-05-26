@@ -51,6 +51,7 @@ public class LexicalClient {
 	private JsonParser parser;
 	
 	public LexicalClient(String url) {
+		System.setProperty("jsse.enableSNIExtension", "false");
 		this.url = url + "/extract";
 		gson = new Gson();
 		parser = new JsonParser();
