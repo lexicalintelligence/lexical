@@ -16,18 +16,26 @@
 
 package com.lexicalintelligence;
 
+import com.lexicalintelligence.query.EntityQuery;
+import com.lexicalintelligence.query.FilesQuery;
+import com.lexicalintelligence.response.FilesResponse;
+
 public class LexicalClientExample {
 	public static void main(String[] args) {
 		// Connection to lexical server
-		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/lexicon/mesh");
+		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/indexer/mesh");
 		
 		// Text to be processed
-		LexicalRequest lexicalRequest = new LexicalRequest("Happiness and health");
+		EntityQuery lexicalRequest = new EntityQuery("Happiness and health");
 		
 		// Response from the server
 		LexicalResponse lexicalResponse = lexicalClient.process(lexicalRequest);
 		
 		// Process the response
 		lexicalResponse.getEntries().stream().forEach(System.out::println);
+
+		FilesQuery filesQuery = new FilesQuery();
+		FilesResponse filesResponse = lexicalClient.process(filesQuery);
+		System.out.println(filesResponse.getCoordinations());
 	}
 }

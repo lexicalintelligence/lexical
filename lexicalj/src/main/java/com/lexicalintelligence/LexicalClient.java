@@ -31,14 +31,19 @@ import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.lexicalintelligence.query.EntityQuery;
+import com.lexicalintelligence.query.FilesQuery;
+import com.lexicalintelligence.response.FilesResponse;
 
 public class LexicalClient {
 	protected final Log log = LogFactory.getLog(LexicalClient.class);
@@ -49,22 +54,59 @@ public class LexicalClient {
 	private String url;
 	private Gson gson;
 	private JsonParser parser;
+
+	private String extract = "/extract";
+	private String coordinations = "/files/coordinations";
 	
 	public LexicalClient(String url) {
 		System.setProperty("jsse.enableSNIExtension", "false");
-		this.url = url + "/extract";
+		this.url = url;
 		gson = new Gson();
 		parser = new JsonParser();
 	}
 	
-	public LexicalResponse process(LexicalRequest lexicalRequest) {
+	public FilesResponse process(FilesQuery query) {
+		FilesResponse filesResponse = new FilesResponse();
+		if (query == null) {
+			return filesResponse;
+		}
+		HttpGet get = new HttpGet(url + coordinations);
+		Reader reader = null;
+		try {
+			HttpResponse response = httpClient.execute(get);
+			response.getEntity().getContent();
+			reader = new InputStreamReader(response.getEntity().getContent(), "UTF8");
+			
+			//System.out.println(IOUtils.toString(reader));
+			
+			JsonArray obj = parser.parse(reader).getAsJsonArray();
+			List<String> jslist = gson.fromJson(obj, new TypeToken<List<String>>() {
+			}.getType());
+			filesResponse.setCoordinations(jslist);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		}
+		finally {
+			try {
+				reader.close();
+			}
+			catch (Exception e) {
+				
+			}
+		}
+		return filesResponse;
+	}
+
+	public LexicalResponse process(EntityQuery lexicalRequest) {
 		LexicalResponse lexicalResponse = new LexicalResponse();
 		if (lexicalRequest == null) {
 			return lexicalResponse;
 		}
 		
-		List<LexicalEntry> result = new ArrayList<>();
-		HttpPost post = new HttpPost(url);
+		//List<LexicalEntry> result = new ArrayList<>();
+		HttpPost post = new HttpPost(url + extract);
 		
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
 		params.add(new BasicNameValuePair("text", lexicalRequest.getText()));

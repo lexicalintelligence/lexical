@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence;
+package com.lexicalintelligence.query;
 
-public class LexicalRequest {
+public class EntityQuery {
 	private String text = "";
 	private boolean expandAbbreviations = true;
 	private boolean expandCoordinations = true;
@@ -24,7 +24,7 @@ public class LexicalRequest {
 	private boolean checkSpelling = true;
 	private boolean extractEntities = true;
 	
-	public LexicalRequest(String text) {
+	public EntityQuery(String text) {
 		if (text != null) {
 			this.text = text;
 		}
@@ -76,7 +76,7 @@ public class LexicalRequest {
 	 * @param text the text to set
 	 * @return this
 	 */
-	public LexicalRequest setText(String text) {
+	public EntityQuery setText(String text) {
 		if (text != null) {
 			this.text = text;
 		}
@@ -86,8 +86,8 @@ public class LexicalRequest {
 	/**
 	 * @param expandAbbreviations the expandAbbreviations to set
 	 * @return this
-	*/
-	public LexicalRequest setExpandAbbreviations(boolean expandAbbreviations) {
+	 */
+	public EntityQuery setExpandAbbreviations(boolean expandAbbreviations) {
 		this.expandAbbreviations = expandAbbreviations;
 		return this;
 	}
@@ -95,8 +95,8 @@ public class LexicalRequest {
 	/**
 	 * @param expandCoordinations the expandCoordinations to set
 	 * @return this
-	*/
-	public LexicalRequest setExpandCoordinations(boolean expandCoordinations) {
+	 */
+	public EntityQuery setExpandCoordinations(boolean expandCoordinations) {
 		this.expandCoordinations = expandCoordinations;
 		return this;
 	}
@@ -105,7 +105,7 @@ public class LexicalRequest {
 	 * @param detectNegations the detectNegations to set
 	 * @return this
 	 */
-	public LexicalRequest setDetectNegations(boolean detectNegations) {
+	public EntityQuery setDetectNegations(boolean detectNegations) {
 		this.detectNegations = detectNegations;
 		return this;
 	}
@@ -113,8 +113,8 @@ public class LexicalRequest {
 	/**
 	 * @param checkSpelling the checkSpelling to set
 	 * @return this
-	*/
-	public LexicalRequest setCheckSpelling(boolean checkSpelling) {
+	 */
+	public EntityQuery setCheckSpelling(boolean checkSpelling) {
 		this.checkSpelling = checkSpelling;
 		return this;
 	}
@@ -122,8 +122,8 @@ public class LexicalRequest {
 	/**
 	 * @param extractEntities the extractEntities to set
 	 * @return this
-	*/
-	public LexicalRequest setExtractEntities(boolean extractEntities) {
+	 */
+	public EntityQuery setExtractEntities(boolean extractEntities) {
 		this.extractEntities = extractEntities;
 		return this;
 	}
