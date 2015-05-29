@@ -16,10 +16,9 @@
 
 package com.lexicalintelligence.query;
 
-/**
- * @author Kirk Baker
- *
- */
-public class AdminQueryBuilder extends LexicalQueryBuilder {
+public class AdminQueryBuilder {
+	public enum Type {
 
+	}
+	
 }

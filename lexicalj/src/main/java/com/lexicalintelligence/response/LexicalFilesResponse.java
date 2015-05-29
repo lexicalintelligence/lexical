@@ -18,17 +18,51 @@ package com.lexicalintelligence.response;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Map;
 
-public class FilesResponse {
-	Collection<String> coordinations = Collections.emptyList();
-
+public class LexicalFilesResponse {
+	private Collection<String> coordinations = Collections.emptyList();
+	private Collection<String> negations = Collections.emptyList();
+	private Collection<String> stopwords = Collections.emptyList();
+	private Map<String, String> spellings = Collections.emptyMap();
+	
 	public Collection<String> getCoordinations() {
 		return coordinations;
 	}
-	
+
 	public void setCoordinations(Collection<String> coordinations) {
 		if (coordinations != null) {
 			this.coordinations = coordinations;
 		}
+	}
+	
+	public void setNegations(Collection<String> negations) {
+		if (negations != null) {
+			this.negations = negations;
+		}
+	}
+	
+	public void setStopwords(Collection<String> stopwords) {
+		if (stopwords != null) {
+			this.stopwords = stopwords;
+		}
+	}
+	
+	public Collection<String> getNegations() {
+		return negations;
+	}
+
+	public Map<String, String> getSpellings() {
+		return spellings;
+	}
+
+	public void setSpellings(Map<String, String> spellings) {
+		if (spellings != null) {
+			this.spellings = spellings;
+		}
+	}
+
+	public Collection<String> getStopwords() {
+		return stopwords;
 	}
 }

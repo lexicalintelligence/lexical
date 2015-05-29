@@ -20,6 +20,6 @@ package com.lexicalintelligence.query;
  * @author Kirk Baker
  *
  */
-public class EntityQueryBuilder extends LexicalQueryBuilder {
-	
+public class EntityQueryBuilder {
+
 }

@@ -16,6 +16,28 @@
 
 package com.lexicalintelligence.query;
 
-public class FilesQuery {
+public class LexicalFilesQuery {
+	public enum Type {
+		COORDINATIONS,
+		STOPWORDS,
+		NEGATIONS,
+		SPELLINGS;
+	}
 
+	private Type type;
+
+	/**
+	 * Sets the type of the files query.
+	 */
+	public LexicalFilesQuery type(Type type) {
+		this.type = type;
+		return this;
+	}
+	
+	/**
+	 * Gets the type of the files query.
+	 */
+	public Type type() {
+		return type;
+	}
 }

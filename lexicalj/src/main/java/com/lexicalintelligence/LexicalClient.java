@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,47 +43,68 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.lexicalintelligence.query.EntityQuery;
-import com.lexicalintelligence.query.FilesQuery;
-import com.lexicalintelligence.response.FilesResponse;
+import com.lexicalintelligence.query.LexicalFilesQuery;
+import com.lexicalintelligence.response.LexicalFilesResponse;
 
 public class LexicalClient {
 	protected final Log log = LogFactory.getLog(LexicalClient.class);
 	private static HttpClient httpClient = HttpClientBuilder.create().build();
 	private static Type type = new TypeToken<Map<String, List<Map<String, Object>>>>() {
 	}.getType();
-	
+
 	private String url;
 	private Gson gson;
 	private JsonParser parser;
-
-	private String extract = "/extract";
-	private String coordinations = "/files/coordinations";
 	
+	private String extract = "/extract";
+	private String files = "/files/";
+
 	public LexicalClient(String url) {
 		System.setProperty("jsse.enableSNIExtension", "false");
 		this.url = url;
 		gson = new Gson();
 		parser = new JsonParser();
 	}
-	
-	public FilesResponse process(FilesQuery query) {
-		FilesResponse filesResponse = new FilesResponse();
-		if (query == null) {
+
+	public LexicalFilesResponse process(LexicalFilesQuery filesQuery) {
+		LexicalFilesResponse filesResponse = new LexicalFilesResponse();
+		if (filesQuery == null) {
 			return filesResponse;
 		}
-		HttpGet get = new HttpGet(url + coordinations);
+		HttpGet get = new HttpGet(url + files + filesQuery.type().toString().toLowerCase());
 		Reader reader = null;
 		try {
 			HttpResponse response = httpClient.execute(get);
 			response.getEntity().getContent();
-			reader = new InputStreamReader(response.getEntity().getContent(), "UTF8");
-			
-			//System.out.println(IOUtils.toString(reader));
-			
-			JsonArray obj = parser.parse(reader).getAsJsonArray();
-			List<String> jslist = gson.fromJson(obj, new TypeToken<List<String>>() {
-			}.getType());
-			filesResponse.setCoordinations(jslist);
+			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
+			switch (filesQuery.type()) {
+				case SPELLINGS:
+					JsonObject obj = parser.parse(reader).getAsJsonObject();
+					Map<String, String> jsmap = gson.fromJson(obj, new TypeToken<Map<String, String>>() {
+					}.getType());
+					filesResponse.setSpellings(jsmap);
+					break;
+				case COORDINATIONS:
+					JsonArray jsarray = parser.parse(reader).getAsJsonArray();
+					List<String> jslist = gson.fromJson(jsarray, new TypeToken<List<String>>() {
+					}.getType());
+					filesResponse.setCoordinations(jslist);
+					break;
+				case NEGATIONS:
+					jsarray = parser.parse(reader).getAsJsonArray();
+					jslist = gson.fromJson(jsarray, new TypeToken<List<String>>() {
+					}.getType());
+					filesResponse.setNegations(jslist);
+					break;
+				case STOPWORDS:
+					jsarray = parser.parse(reader).getAsJsonArray();
+					jslist = gson.fromJson(jsarray, new TypeToken<List<String>>() {
+					}.getType());
+					filesResponse.setStopwords(jslist);
+					break;
+				default:
+					break;
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -93,21 +115,21 @@ public class LexicalClient {
 				reader.close();
 			}
 			catch (Exception e) {
-				
+
 			}
 		}
 		return filesResponse;
 	}
-
+	
 	public LexicalResponse process(EntityQuery lexicalRequest) {
 		LexicalResponse lexicalResponse = new LexicalResponse();
 		if (lexicalRequest == null) {
 			return lexicalResponse;
 		}
-		
+
 		//List<LexicalEntry> result = new ArrayList<>();
 		HttpPost post = new HttpPost(url + extract);
-		
+
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
 		params.add(new BasicNameValuePair("text", lexicalRequest.getText()));
 		params.add(new BasicNameValuePair("expandAbbreviations", String.valueOf(lexicalRequest.isExpandAbbreviations())));
@@ -115,19 +137,19 @@ public class LexicalClient {
 		params.add(new BasicNameValuePair("detectNegation", String.valueOf(lexicalRequest.isDetectNegations())));
 		params.add(new BasicNameValuePair("checkSpelling", String.valueOf(lexicalRequest.isCheckSpelling())));
 		params.add(new BasicNameValuePair("extractEntitites", String.valueOf(lexicalRequest.isExtractEntities())));
-		
+
 		Reader reader = null;
 		try {
 			post.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse response = httpClient.execute(post);
 			reader = new InputStreamReader(response.getEntity().getContent(), "UTF8");
-			
+
 			//System.out.println(IOUtils.toString(reader));
-			
+
 			JsonObject obj = parser.parse(reader).getAsJsonObject();
-			
+
 			Map<String, List<Map<String, Object>>> jsmap = gson.fromJson(obj, type);
-			
+
 			if (jsmap != null) {
 				List<Map<String, Object>> entries = jsmap.get("entries");
 				lexicalResponse.setEntries(entries.stream().map(entry -> LexicalEntry.create(entry)).collect(Collectors.toList()));
