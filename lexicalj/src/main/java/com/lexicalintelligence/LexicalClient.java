@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -34,6 +35,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -42,8 +44,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.lexicalintelligence.query.AddQuery;
 import com.lexicalintelligence.query.EntityQuery;
 import com.lexicalintelligence.query.LexicalFilesQuery;
+import com.lexicalintelligence.response.AddResponse;
+import com.lexicalintelligence.response.LexicalEntityResponse;
 import com.lexicalintelligence.response.LexicalFilesResponse;
 
 public class LexicalClient {
@@ -58,6 +63,7 @@ public class LexicalClient {
 	
 	private String extract = "/extract";
 	private String files = "/files/";
+	private String add = "/add?";
 
 	public LexicalClient(String url) {
 		System.setProperty("jsse.enableSNIExtension", "false");
@@ -66,6 +72,50 @@ public class LexicalClient {
 		parser = new JsonParser();
 	}
 
+	public AddResponse add(AddQuery addQuery) {
+		AddResponse addResponse = new AddResponse();
+		if (addQuery == null) {
+			return addResponse;
+		}
+		
+		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
+		params.add(new BasicNameValuePair("name", addQuery.getName()));
+		params.add(new BasicNameValuePair("synonym", addQuery.getSynonym()));
+		if (addQuery.getId() > 0) {
+			params.add(new BasicNameValuePair("id", addQuery.getId() + ""));
+		}
+
+		params.add(new BasicNameValuePair("matchWordOrder", String.valueOf(addQuery.isOrderSensitive())));
+		params.add(new BasicNameValuePair("caseSensitive", String.valueOf(addQuery.isCaseSensitive())));
+		params.add(new BasicNameValuePair("matchStopwords", String.valueOf(addQuery.isMatchStopwords())));
+		// params.add(new BasicNameValuePair("matchPunctuation", String.valueOf(addQuery.isMatchPunctuation())));
+
+		System.out.println(url + add + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
+
+		HttpGet get = new HttpGet(url + add + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
+		Reader reader = null;
+		try {
+			HttpResponse response = httpClient.execute(get);
+			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
+			boolean added = Boolean.valueOf(IOUtils.toString(reader));
+			addResponse.setAdded(added);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		}
+		finally {
+			try {
+				reader.close();
+			}
+			catch (Exception e) {
+
+			}
+		}
+
+		return addResponse;
+	}
+	
 	public LexicalFilesResponse process(LexicalFilesQuery filesQuery) {
 		LexicalFilesResponse filesResponse = new LexicalFilesResponse();
 		if (filesQuery == null) {
@@ -121,8 +171,8 @@ public class LexicalClient {
 		return filesResponse;
 	}
 	
-	public LexicalResponse process(EntityQuery lexicalRequest) {
-		LexicalResponse lexicalResponse = new LexicalResponse();
+	public LexicalEntityResponse process(EntityQuery lexicalRequest) {
+		LexicalEntityResponse lexicalResponse = new LexicalEntityResponse();
 		if (lexicalRequest == null) {
 			return lexicalResponse;
 		}

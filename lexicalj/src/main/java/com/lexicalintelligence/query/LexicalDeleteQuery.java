@@ -14,22 +14,8 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence;
+package com.lexicalintelligence.query;
 
-import java.util.Collections;
-import java.util.List;
+public class LexicalDeleteQuery {
 
-public class LexicalResponse {
-	private List<LexicalEntry> entries = Collections.emptyList();
-	
-	public LexicalResponse setEntries(List<LexicalEntry> entries) {
-		if (entries != null) {
-			this.entries = entries;
-		}
-		return this;
-	}
-	
-	public List<LexicalEntry> getEntries() {
-		return entries;
-	}
 }
