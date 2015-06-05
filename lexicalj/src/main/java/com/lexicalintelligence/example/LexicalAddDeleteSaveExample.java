@@ -18,23 +18,33 @@ package com.lexicalintelligence.example;
 
 import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.query.AddQuery;
+import com.lexicalintelligence.query.EntityQuery;
 import com.lexicalintelligence.response.AddResponse;
 
-public class LexicalAddExample {
+public class LexicalAddDeleteSaveExample {
 	public static void main(String[] args) {
 		// Connection to lexical server
-		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/lexicon/mesh");
-
+		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/rehab");
+		
 		// Add new entry to lexicon
-		AddQuery addQuery = new AddQuery("Lexical Intelligence");
-		addQuery.synonym("Lexical");
+		AddQuery addQuery = new AddQuery("Kirk");
+		addQuery.synonym("kirk");
 		addQuery.caseSensitive(true);
 		addQuery.orderSensitive(true);
 		addQuery.matchStopwords(true);
 		addQuery.stemmed(false);
-
-		AddResponse addResponse = lexicalClient.add(addQuery);
-
+		
+		AddResponse addResponse = lexical.add(addQuery);
+		
 		System.out.println(addResponse.isAdded());
+		//System.out.println(lexical.save());
+
+		System.out.println(lexical.process(new EntityQuery("Lexical")).getEntries());
+
+		lexical.remove("Kirk", "kirk");
+
+		System.out.println(lexical.process(new EntityQuery("kirk")).getEntries());
+		
+		//System.out.println(lexical.save());
 	}
 }
