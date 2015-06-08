@@ -26,35 +26,46 @@ public class LexicalEntry {
 	private int start;
 	private int end;
 	private List<String> semanticTypes = Collections.emptyList();
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public int getStart() {
 		return start;
 	}
-	
+
 	public int getEnd() {
 		return end;
 	}
-	
+
 	public List<String> getSemanticTypes() {
 		return semanticTypes;
 	}
-	
+
+	@Override
 	public String toString() {
 		return "<name:" + name + ">";
 	}
-	
+
 	private LexicalEntry() {
-		
+
 	}
 	
+	@Override
+	public boolean equals(Object o) {
+		return ((LexicalEntry) o).id == id;
+	}
+
+	@Override
+	public int hashCode() {
+		return Integer.hashCode(id);
+	}
+
 	@SuppressWarnings("unchecked")
 	public static LexicalEntry create(Map<String, Object> map) {
 		if (map == null) {
