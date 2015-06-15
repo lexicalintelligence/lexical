@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.get;
+package com.lexicalintelligence.add;
 
-public abstract class GetResponse {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class AddNegationsRequest {
+	private List<String> negations = Collections.emptyList();
+	
+	public AddNegationsRequest(List<String> negations) {
+		if (negations != null) {
+			this.negations = new ArrayList<>(negations);
+		}
+	}
+	
+	public List<String> getNegations() {
+		return negations;
+	}
 }

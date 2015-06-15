@@ -14,23 +14,21 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.query;
+package com.lexicalintelligence.get;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
-public class AddStopwordsRequest {
-	Set<String> stopwords = Collections.emptySet();
-	
-	public void setStopwords(Collection<String> stopwords) {
-		if (stopwords != null) {
-			this.stopwords = new HashSet<>(stopwords);
+public class GetIdiomsResponse extends GetResponse {
+	private List<String> idioms = Collections.emptyList();
+
+	public GetIdiomsResponse(List<String> idioms) {
+		if (idioms != null) {
+			this.idioms = idioms;
 		}
 	}
-	
-	public Set<String> getStopwords() {
-		return stopwords;
+
+	public List<String> getIdioms() {
+		return idioms;
 	}
 }

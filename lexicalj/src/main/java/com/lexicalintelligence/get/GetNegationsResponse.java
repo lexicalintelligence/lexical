@@ -16,6 +16,19 @@
 
 package com.lexicalintelligence.get;
 
-public class GetNegationsRequest {
+import java.util.Collections;
+import java.util.List;
+
+public class GetNegationsResponse extends GetResponse {
+	private List<String> negations = Collections.emptyList();
 	
+	public GetNegationsResponse(List<String> negations) {
+		if (negations != null) {
+			this.negations = negations;
+		}
+	}
+	
+	public List<String> getNegations() {
+		return negations;
+	}
 }

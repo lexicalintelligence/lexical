@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.get;
+package com.lexicalintelligence.add;
 
-public abstract class GetResponse {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class AddIdiomsRequest {
+	private List<String> idioms = Collections.emptyList();
+
+	public AddIdiomsRequest(List<String> coordinations) {
+		if (coordinations != null) {
+			this.idioms = new ArrayList<>(coordinations);
+		}
+	}
+
+	public List<String> getIdioms() {
+		return idioms;
+	}
 }

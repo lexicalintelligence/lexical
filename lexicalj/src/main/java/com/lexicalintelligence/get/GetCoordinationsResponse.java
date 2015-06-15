@@ -16,5 +16,19 @@
 
 package com.lexicalintelligence.get;
 
-public abstract class GetResponse {
+import java.util.Collections;
+import java.util.List;
+
+public class GetCoordinationsResponse extends GetResponse {
+	private List<String> coordinations = Collections.emptyList();
+	
+	public GetCoordinationsResponse(List<String> coordinations) {
+		if (coordinations != null) {
+			this.coordinations = coordinations;
+		}
+	}
+	
+	public List<String> getCoordinations() {
+		return coordinations;
+	}
 }

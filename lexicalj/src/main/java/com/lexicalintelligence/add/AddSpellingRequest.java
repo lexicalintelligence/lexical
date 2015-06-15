@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.get;
+package com.lexicalintelligence.add;
 
-public abstract class GetResponse {
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+public class AddSpellingRequest {
+	private Map<String, String> spellings = Collections.emptyMap();
+	
+	public AddSpellingRequest(Map<String, String> spellings) {
+		if (spellings != null) {
+			this.spellings = new HashMap<>(spellings);
+		}
+	}
+	
+	public Map<String, String> getSpellings() {
+		return spellings;
+	}
 }

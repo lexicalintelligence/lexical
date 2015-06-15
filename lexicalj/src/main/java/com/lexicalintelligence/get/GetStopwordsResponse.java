@@ -16,6 +16,19 @@
 
 package com.lexicalintelligence.get;
 
-public class GetSpellingsRequest extends GetRequest {
+import java.util.Collections;
+import java.util.List;
+
+public class GetStopwordsResponse extends GetResponse {
+	private List<String> stopwords = Collections.emptyList();
 	
+	public GetStopwordsResponse(List<String> stopwords) {
+		if (stopwords != null) {
+			this.stopwords = stopwords;
+		}
+	}
+	
+	public List<String> getStopwords() {
+		return stopwords;
+	}
 }

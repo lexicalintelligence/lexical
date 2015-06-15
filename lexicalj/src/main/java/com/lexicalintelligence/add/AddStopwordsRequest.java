@@ -14,7 +14,22 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.get;
+package com.lexicalintelligence.add;
 
-public abstract class GetResponse {
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class AddStopwordsRequest {
+	private List<String> stopwords = Collections.emptyList();
+	
+	public AddStopwordsRequest(List<String> stopwords) {
+		if (stopwords != null) {
+			this.stopwords = new ArrayList<>(stopwords);
+		}
+	}
+	
+	public List<String> getStopwords() {
+		return stopwords;
+	}
 }

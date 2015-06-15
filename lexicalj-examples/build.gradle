@@ -1,0 +1,7 @@
+apply from: '../maven.gradle'
+
+description 'Lexical Client Examples'
+
+dependencies {
+  compile project(':lexicalj')
+}

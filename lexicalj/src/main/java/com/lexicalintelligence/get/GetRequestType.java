@@ -16,5 +16,10 @@
 
 package com.lexicalintelligence.get;
 
-public abstract class GetResponse {
+public enum GetRequestType {
+	Coordinations,
+	Negations,
+	Idioms,
+	Stopwords,
+	Spelling;
 }

@@ -16,6 +16,19 @@
 
 package com.lexicalintelligence.get;
 
+import java.util.Collections;
+import java.util.Map;
+
 public class GetSpellingsResponse extends GetResponse {
-	
+	private Map<String, String> spellings = Collections.emptyMap();
+
+	public GetSpellingsResponse(Map<String, String> spellings) {
+		if (spellings != null) {
+			this.spellings = spellings;
+		}
+	}
+
+	public Map<String, String> getSpellings() {
+		return spellings;
+	}
 }

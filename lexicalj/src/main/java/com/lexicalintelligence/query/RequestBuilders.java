@@ -16,27 +16,28 @@
 
 package com.lexicalintelligence.query;
 
-public interface LexicalQueryBuilders {
+
+public interface RequestBuilders {
 	public static EntityQueryBuilder entityQuery() {
 		return new EntityQueryBuilder();
 	}
-	
+
 	public static AdminQueryBuilder adminQuery() {
 		return new AdminQueryBuilder();
 	}
-
+	
 	public static LexicalFilesQuery coordinationsFileQuery() {
 		return new LexicalFilesQuery().type(LexicalFilesQuery.Type.COORDINATIONS);
 	}
-
+	
 	public static LexicalFilesQuery negationsFileQuery() {
 		return new LexicalFilesQuery().type(LexicalFilesQuery.Type.NEGATIONS);
 	}
-
+	
 	public static LexicalFilesQuery stopwordsFileQuery() {
 		return new LexicalFilesQuery().type(LexicalFilesQuery.Type.STOPWORDS);
 	}
-	
+
 	public static LexicalFilesQuery spellingsFileQuery() {
 		return new LexicalFilesQuery().type(LexicalFilesQuery.Type.SPELLINGS);
 	}

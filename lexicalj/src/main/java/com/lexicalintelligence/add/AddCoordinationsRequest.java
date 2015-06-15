@@ -14,24 +14,22 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.response;
+package com.lexicalintelligence.add;
 
-public class AddResponse {
-	private boolean added;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+public class AddCoordinationsRequest {
+	private List<String> coordinations = Collections.emptyList();
 	
-	public AddResponse() {
-		
+	public AddCoordinationsRequest(List<String> coordinations) {
+		if (coordinations != null) {
+			this.coordinations = new ArrayList<>(coordinations);
+		}
 	}
 	
-	public AddResponse(boolean added) {
-		setAdded(added);
-	}
-	
-	public void setAdded(boolean added) {
-		this.added = added;
-	}
-	
-	public boolean isAdded() {
-		return added;
+	public List<String> getCoordinations() {
+		return coordinations;
 	}
 }

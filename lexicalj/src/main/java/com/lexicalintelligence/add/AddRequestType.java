@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.get;
+package com.lexicalintelligence.add;
 
-public abstract class GetRequest {
-	public static enum GetType {
-		Spellings;
-	}
+public enum AddRequestType {
+	Coordinations,
+	Negations,
+	Idioms,
+	Stopwords,
+	Spelling;
 }
