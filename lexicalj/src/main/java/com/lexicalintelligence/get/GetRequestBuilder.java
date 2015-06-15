@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.response;
+package com.lexicalintelligence.get;
 
-public class AddResponse {
-	private boolean added;
+import com.lexicalintelligence.get.GetRequest.GetType;
+
+public class GetRequestBuilder {
 	
-	public AddResponse() {
-		
+	GetType type;
+	
+	public GetRequestBuilder(GetType type) {
+		this.type = type;
 	}
 	
-	public AddResponse(boolean added) {
-		setAdded(added);
+	@SuppressWarnings("unchecked")
+	public <T extends GetResponse> T execute() {
+		switch (type) {
+			case Spellings:
+				return (T) new GetSpellingsResponse();
+		}
+		throw new RuntimeException("Type " + type + " not supported");
 	}
 	
-	public void setAdded(boolean added) {
-		this.added = added;
-	}
-	
-	public boolean isAdded() {
-		return added;
-	}
 }

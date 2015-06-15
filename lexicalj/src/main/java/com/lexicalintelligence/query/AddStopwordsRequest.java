@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.response;
+package com.lexicalintelligence.query;
 
-public class AddResponse {
-	private boolean added;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+public class AddStopwordsRequest {
+	Set<String> stopwords = Collections.emptySet();
 	
-	public AddResponse() {
-		
+	public void setStopwords(Collection<String> stopwords) {
+		if (stopwords != null) {
+			this.stopwords = new HashSet<>(stopwords);
+		}
 	}
 	
-	public AddResponse(boolean added) {
-		setAdded(added);
-	}
-	
-	public void setAdded(boolean added) {
-		this.added = added;
-	}
-	
-	public boolean isAdded() {
-		return added;
+	public Set<String> getStopwords() {
+		return stopwords;
 	}
 }

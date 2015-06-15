@@ -44,7 +44,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
+import com.lexicalintelligence.get.GetRequest.GetType;
+import com.lexicalintelligence.get.GetRequestBuilder;
 import com.lexicalintelligence.query.AddQuery;
+import com.lexicalintelligence.query.AddStopwordsRequest;
 import com.lexicalintelligence.query.EntityQuery;
 import com.lexicalintelligence.query.LexicalFilesQuery;
 import com.lexicalintelligence.response.AddResponse;
@@ -61,7 +64,7 @@ public class LexicalClient {
 	private String url;
 	private Gson gson;
 	private JsonParser parser;
-
+	
 	private String extract = "/extract";
 	private String files = "/files/";
 	private String add = "/add?";
@@ -74,7 +77,46 @@ public class LexicalClient {
 		gson = new Gson();
 		parser = new JsonParser();
 	}
-
+	
+	public GetRequestBuilder prepareGet(GetType type) {
+		return new GetRequestBuilder(type);
+	}
+	
+	public AddResponse addStopwords(AddStopwordsRequest request) {
+		AddResponse addResponse = new AddResponse();
+		if (request == null) {
+			return addResponse;
+		}
+		
+		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
+		
+		request.getStopwords().stream().forEach(stopword -> {
+			params.add(new BasicNameValuePair("stopword", stopword));
+		});
+		
+		HttpGet get = new HttpGet(url + add + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
+		Reader reader = null;
+		try {
+			HttpResponse response = httpClient.execute(get);
+			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
+			boolean added = Boolean.valueOf(IOUtils.toString(reader));
+			addResponse.setAdded(added);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		}
+		finally {
+			try {
+				reader.close();
+			}
+			catch (Exception e) {
+				
+			}
+		}
+		return addResponse;
+	}
+	
 	public boolean save() {
 		HttpGet get = new HttpGet(url + save);
 		Reader reader = null;
@@ -130,13 +172,13 @@ public class LexicalClient {
 		}
 		return removeResponse;
 	}
-
+	
 	public AddResponse add(AddQuery addQuery) {
 		AddResponse addResponse = new AddResponse();
 		if (addQuery == null) {
 			return addResponse;
 		}
-
+		
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
 		params.add(new BasicNameValuePair("name", addQuery.getName()));
 		params.add(new BasicNameValuePair("synonym", addQuery.getSynonym()));
@@ -172,7 +214,7 @@ public class LexicalClient {
 		
 		return addResponse;
 	}
-
+	
 	public LexicalFilesResponse process(LexicalFilesQuery filesQuery) {
 		LexicalFilesResponse filesResponse = new LexicalFilesResponse();
 		if (filesQuery == null) {
@@ -227,13 +269,13 @@ public class LexicalClient {
 		}
 		return filesResponse;
 	}
-
+	
 	public LexicalEntityResponse process(EntityQuery lexicalRequest) {
 		LexicalEntityResponse lexicalResponse = new LexicalEntityResponse();
 		if (lexicalRequest == null) {
 			return lexicalResponse;
 		}
-
+		
 		HttpPost post = new HttpPost(url + extract);
 		
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);

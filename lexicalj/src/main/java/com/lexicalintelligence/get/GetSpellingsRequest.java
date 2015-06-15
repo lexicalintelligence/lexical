@@ -14,24 +14,8 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.response;
+package com.lexicalintelligence.get;
 
-public class AddResponse {
-	private boolean added;
+public class GetSpellingsRequest extends GetRequest {
 	
-	public AddResponse() {
-		
-	}
-	
-	public AddResponse(boolean added) {
-		setAdded(added);
-	}
-	
-	public void setAdded(boolean added) {
-		this.added = added;
-	}
-	
-	public boolean isAdded() {
-		return added;
-	}
 }
