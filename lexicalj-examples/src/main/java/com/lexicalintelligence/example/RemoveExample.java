@@ -16,22 +16,30 @@
 
 package com.lexicalintelligence.example;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.extract.ExtractRequest;
-import com.lexicalintelligence.extract.ExtractResponse;
+import com.lexicalintelligence.remove.RemoveRequest;
+import com.lexicalintelligence.remove.RemoveResponse;
 
-public class LexicalClientEntitiesExample {
+public class RemoveExample {
 	public static void main(String[] args) {
-		// Connection to lexical server
-		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/lexicon/mesh");
-
-		// Text to be processed
-		ExtractRequest lexicalRequest = new ExtractRequest("Happiness and health");
-
-		// Response from the server
-		ExtractResponse lexicalResponse = lexicalClient.submit(lexicalRequest);
-
-		// Process the response
-		lexicalResponse.getEntries().stream().forEach(System.out::println);
+		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
+		Collection<String> items = new ArrayList<>();
+		items.add("night owl");
+		
+		RemoveResponse removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Coordinations) {
+		}.setItems(items));
+		
+		items.clear();
+		items.add("tpyo");
+		items.add("typo");
+		
+		removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Spelling) {
+		}.setItems(items));
+		
+		System.out.println(removeResponse.isRemoved());
+		
 	}
 }

@@ -17,21 +17,26 @@
 package com.lexicalintelligence.example;
 
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.extract.ExtractRequest;
-import com.lexicalintelligence.extract.ExtractResponse;
+import com.lexicalintelligence.LexicalEntry;
+import com.lexicalintelligence.add.AddEntryRequest;
+import com.lexicalintelligence.add.AddResponse;
 
-public class LexicalClientEntitiesExample {
+public class AddEntryExample {
 	public static void main(String[] args) {
-		// Connection to lexical server
-		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/lexicon/mesh");
-
-		// Text to be processed
-		ExtractRequest lexicalRequest = new ExtractRequest("Happiness and health");
-
-		// Response from the server
-		ExtractResponse lexicalResponse = lexicalClient.submit(lexicalRequest);
-
-		// Process the response
-		lexicalResponse.getEntries().stream().forEach(System.out::println);
+		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
+		
+		LexicalEntry entry = new LexicalEntry();
+		entry.setName("Lexical Intelligence");
+		entry.setSynonym("Lexical Intelligence");
+		entry.setCaseSensitive(true);
+		entry.setOrderSensitive(true);
+		entry.setMatchPunctuation(true);
+		entry.setMatchStopwords(true);
+		entry.setStemmed(false);
+		
+		AddResponse response = lexical.submit(new AddEntryRequest(entry));
+		
+		System.out.println(response.isAdded());
+		
 	}
 }

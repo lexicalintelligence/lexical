@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.add;
+package com.lexicalintelligence.remove;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -34,33 +34,63 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.lexicalintelligence.LexicalEntry;
+import com.lexicalintelligence.add.AddEntryRequest;
+import com.lexicalintelligence.add.AddIdiomsRequest;
+import com.lexicalintelligence.add.AddNegationsRequest;
+import com.lexicalintelligence.add.AddResponse;
+import com.lexicalintelligence.add.AddSpellingRequest;
+import com.lexicalintelligence.add.AddStopwordsRequest;
 
-public class AddRequestHandler {
-	private Log log = LogFactory.getLog(AddRequestHandler.class);
+public class RemoveRequestHandler {
+	private Log log = LogFactory.getLog(RemoveRequestHandler.class);
 	
-	private static AddRequestHandler instance = new AddRequestHandler();
+	private static RemoveRequestHandler instance = new RemoveRequestHandler();
 	
-	private AddRequestHandler() {
+	private RemoveRequestHandler() {
 		
 	}
 	
-	public static AddRequestHandler get() {
+	public static RemoveRequestHandler get() {
 		return instance;
 	}
 	
-	public AddResponse handleAddCoordinationRequest(HttpClient client, String url, AddCoordinationsRequest request) {
-		AddResponse addResponse = new AddResponse();
+	public RemoveResponse handleRemoveRequest(HttpClient client, String url, RemoveRequest request) {
+		RemoveResponse removeResponse = new RemoveResponse();
 		if (request == null) {
-			return addResponse;
+			return removeResponse;
 		}
+		RemoveRequest.Type type = request.getType();
+		url += "/remove/" + request.getType().toString().toLowerCase() + "?";
 		List<NameValuePair> params = new ArrayList<NameValuePair>(1);
-		params.add(new BasicNameValuePair("coordinations", StringUtils.join(request.getCoordinations(), ",")));
+		switch (type) {
+			case Coordinations:
+				params.add(new BasicNameValuePair("coordinations", StringUtils.join(request.getItems(), ",")));
+				break;
+			case Idioms:
+				params.add(new BasicNameValuePair("idioms", StringUtils.join(request.getItems(), ",")));
+				break;
+			case Negations:
+				params.add(new BasicNameValuePair("negations", StringUtils.join(request.getItems(), ",")));
+				break;
+			case Spelling:
+				params.add(new BasicNameValuePair("spellings", StringUtils.join(request.getItems(), ",")));
+				break;
+			case Stopwords:
+				params.add(new BasicNameValuePair("stopwords", StringUtils.join(request.getItems(), ",")));
+				break;
+			case Entity:
+				RemoveEntityRequest rer = (RemoveEntityRequest) request;
+				params.add(new BasicNameValuePair("name", rer.getName()));
+				params.add(new BasicNameValuePair("synonym", rer.getSynonym()));
+				break;
+		}
+		
 		Reader reader = null;
 		try {
-			HttpResponse response = client.execute(new HttpGet(url + "/add/coordinations?" + URLEncodedUtils.format(params, StandardCharsets.UTF_8)));
+			HttpResponse response = client.execute(new HttpGet(url + URLEncodedUtils.format(params, StandardCharsets.UTF_8)));
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			boolean added = Boolean.valueOf(IOUtils.toString(reader));
-			addResponse.setAdded(added);
+			removeResponse.setRemoved(added);
 		}
 		catch (Exception e) {
 			log.error(e);
@@ -73,7 +103,7 @@ public class AddRequestHandler {
 				log.error(e);
 			}
 		}
-		return addResponse;
+		return removeResponse;
 	}
 	
 	public AddResponse handleAddNegationsRequest(HttpClient httpClient, String url, AddNegationsRequest request) {

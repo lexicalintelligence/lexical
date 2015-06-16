@@ -32,22 +32,22 @@ public class AddExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
 		
-		AddResponse response = lexical.submit(new AddCoordinationsRequest(Arrays.asList("nigh owl")));
+		AddResponse response = lexical.submit(new AddCoordinationsRequest(Arrays.asList("night owl,barn owl")));
 		System.out.println(response.isAdded());
 		
 		response = lexical.submit(new AddNegationsRequest(Arrays.asList("nyet")));
 		System.out.println(response.isAdded());
-
+		
 		response = lexical.submit(new AddIdiomsRequest(Arrays.asList("head over heels")));
 		System.out.println(response.isAdded());
-
-		response = lexical.submit(new AddStopwordsRequest(Arrays.asList("boat")));
+		
+		response = lexical.submit(new AddStopwordsRequest(Arrays.asList("moreoverthanwhich")));
 		System.out.println(response.isAdded());
-
+		
 		Map<String, String> dictionary = new HashMap<>();
 		dictionary.put("tpyo", "typo");
 		response = lexical.submit(new AddSpellingRequest(dictionary));
 		System.out.println(response.isAdded());
-
+		
 	}
 }

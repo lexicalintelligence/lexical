@@ -19,12 +19,10 @@ package com.lexicalintelligence;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
@@ -41,17 +39,16 @@ import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.reflect.TypeToken;
 import com.lexicalintelligence.add.AddCoordinationsRequest;
+import com.lexicalintelligence.add.AddEntryRequest;
 import com.lexicalintelligence.add.AddIdiomsRequest;
 import com.lexicalintelligence.add.AddNegationsRequest;
 import com.lexicalintelligence.add.AddRequestHandler;
 import com.lexicalintelligence.add.AddResponse;
 import com.lexicalintelligence.add.AddSpellingRequest;
 import com.lexicalintelligence.add.AddStopwordsRequest;
+import com.lexicalintelligence.extract.ExtractRequest;
+import com.lexicalintelligence.extract.ExtractResponse;
 import com.lexicalintelligence.get.GetCoordinationsResponse;
 import com.lexicalintelligence.get.GetIdiomsResponse;
 import com.lexicalintelligence.get.GetNegationsResponse;
@@ -59,64 +56,63 @@ import com.lexicalintelligence.get.GetRequestType;
 import com.lexicalintelligence.get.GetResponse;
 import com.lexicalintelligence.get.GetSpellingsResponse;
 import com.lexicalintelligence.get.GetStopwordsResponse;
-import com.lexicalintelligence.query.EntityQuery;
-import com.lexicalintelligence.response.LexicalEntityResponse;
-import com.lexicalintelligence.response.RemoveResponse;
+import com.lexicalintelligence.remove.RemoveRequest;
+import com.lexicalintelligence.remove.RemoveRequestHandler;
+import com.lexicalintelligence.remove.RemoveResponse;
+import com.lexicalintelligence.save.SaveRequestType;
+import com.lexicalintelligence.save.SaveResponse;
 
 public class LexicalClient {
 	protected final Log log = LogFactory.getLog(LexicalClient.class);
 	private static HttpClient httpClient = HttpClientBuilder.create().build();
-	private static Type type = new TypeToken<Map<String, List<Map<String, Object>>>>() {
-	}.getType();
-
+	
 	private final ObjectMapper mapper = new ObjectMapper();
-
+	
 	private String url;
-	private Gson gson;
-	private JsonParser parser;
-
+	
 	private String extract = "/extract";
 	private String get = "/get/";
-	private String save = "/save";
 	private String delete = "/remove?";
-
+	
 	public LexicalClient(String url) {
 		System.setProperty("jsse.enableSNIExtension", "false");
 		this.url = url;
-		gson = new Gson();
-		parser = new JsonParser();
+	}
+	
+	public AddResponse submit(AddEntryRequest request) {
+		return AddRequestHandler.get().handleAddEntryRequest(httpClient, url, request);
 	}
 	
 	public AddResponse submit(AddCoordinationsRequest request) {
-		return AddRequestHandler.handleAddCoordinationRequest(httpClient, url, request);
+		return AddRequestHandler.get().handleAddCoordinationRequest(httpClient, url, request);
 	}
-
+	
 	public AddResponse submit(AddNegationsRequest request) {
-		return AddRequestHandler.handleAddNegationsRequest(httpClient, url, request);
+		return AddRequestHandler.get().handleAddNegationsRequest(httpClient, url, request);
 	}
-
+	
 	public AddResponse submit(AddIdiomsRequest request) {
-		return AddRequestHandler.handleAddIdiomsRequest(httpClient, url, request);
+		return AddRequestHandler.get().handleAddIdiomsRequest(httpClient, url, request);
 	}
-
+	
 	public AddResponse submit(AddStopwordsRequest request) {
-		return AddRequestHandler.handleAddStopwordsRequest(httpClient, url, request);
+		return AddRequestHandler.get().handleAddStopwordsRequest(httpClient, url, request);
 	}
-
+	
 	public AddResponse submit(AddSpellingRequest request) {
-		return AddRequestHandler.handleAddSpellingRequest(httpClient, url, request);
+		return AddRequestHandler.get().handleAddSpellingRequest(httpClient, url, request);
 	}
-
-	public boolean save() {
-		HttpGet get = new HttpGet(url + save);
+	
+	public SaveResponse submit(SaveRequestType type) {
+		SaveResponse saveResponse = new SaveResponse();
+		HttpGet get = new HttpGet(url + "/save/" + type.toString().toLowerCase());
 		Reader reader = null;
 		try {
 			HttpResponse response = httpClient.execute(get);
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
-			return Boolean.valueOf(IOUtils.toString(reader));
+			saveResponse.setSaved(Boolean.valueOf(IOUtils.toString(reader)));
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			log.error(e);
 		}
 		finally {
@@ -124,29 +120,33 @@ public class LexicalClient {
 				reader.close();
 			}
 			catch (Exception e) {
-
+				log.error(e);
 			}
 		}
-		return false;
+		return saveResponse;
 	}
-
+	
+	public RemoveResponse submit(RemoveRequest removeRequest) {
+		return RemoveRequestHandler.get().handleRemoveRequest(httpClient, url, removeRequest);
+	}
+	
 	public RemoveResponse remove(String name, String synonym) {
 		RemoveResponse removeResponse = new RemoveResponse();
-
+		
 		if (name == null && synonym == null) {
 			return removeResponse;
 		}
-
+		
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
 		params.add(new BasicNameValuePair("name", name));
 		params.add(new BasicNameValuePair("synonym", synonym));
-
+		
 		HttpGet get = new HttpGet(url + delete + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
 		Reader reader = null;
 		try {
 			HttpResponse response = httpClient.execute(get);
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
-			removeResponse.setDeleted(Boolean.valueOf(IOUtils.toString(reader)));
+			removeResponse.setRemoved(Boolean.valueOf(IOUtils.toString(reader)));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -157,54 +157,12 @@ public class LexicalClient {
 				reader.close();
 			}
 			catch (Exception e) {
-
+				
 			}
 		}
 		return removeResponse;
 	}
-
-	/*public AddResponse add(AddQuery addQuery) {
-		AddResponse addResponse = new AddResponse();
-		if (addQuery == null) {
-			return addResponse;
-		}
-
-		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
-		params.add(new BasicNameValuePair("name", addQuery.getName()));
-		params.add(new BasicNameValuePair("synonym", addQuery.getSynonym()));
-		if (addQuery.getId() > 0) {
-			params.add(new BasicNameValuePair("id", addQuery.getId() + ""));
-		}
-
-		params.add(new BasicNameValuePair("matchWordOrder", String.valueOf(addQuery.isOrderSensitive())));
-		params.add(new BasicNameValuePair("caseSensitive", String.valueOf(addQuery.isCaseSensitive())));
-		params.add(new BasicNameValuePair("matchStopwords", String.valueOf(addQuery.isMatchStopwords())));
-		// params.add(new BasicNameValuePair("matchPunctuation", String.valueOf(addQuery.isMatchPunctuation())));
-
-		HttpGet get = new HttpGet(url + add + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
-		Reader reader = null;
-		try {
-			HttpResponse response = httpClient.execute(get);
-			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
-			boolean added = Boolean.valueOf(IOUtils.toString(reader));
-			addResponse.setAdded(added);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			log.error(e);
-		}
-		finally {
-			try {
-				reader.close();
-			}
-			catch (Exception e) {
-
-			}
-		}
-
-		return addResponse;
-	}*/
-
+	
 	@SuppressWarnings("unchecked")
 	public <T extends GetResponse> T submit(GetRequestType type) {
 		Reader reader = null;
@@ -230,7 +188,6 @@ public class LexicalClient {
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			log.error(e);
 		}
 		finally {
@@ -238,47 +195,40 @@ public class LexicalClient {
 				reader.close();
 			}
 			catch (Exception e) {
-
+				log.error(e);
 			}
 		}
 		return null;
 	}
-
-	public LexicalEntityResponse process(EntityQuery lexicalRequest) {
-		LexicalEntityResponse lexicalResponse = new LexicalEntityResponse();
-		if (lexicalRequest == null) {
+	
+	public ExtractResponse submit(ExtractRequest entityRequest) {
+		ExtractResponse lexicalResponse = new ExtractResponse();
+		if (entityRequest == null) {
 			return lexicalResponse;
 		}
-
+		
 		HttpPost post = new HttpPost(url + extract);
-
+		
 		List<NameValuePair> params = new ArrayList<NameValuePair>(6);
-		params.add(new BasicNameValuePair("text", lexicalRequest.getText()));
-		params.add(new BasicNameValuePair("expandAbbreviations", String.valueOf(lexicalRequest.isExpandAbbreviations())));
-		params.add(new BasicNameValuePair("expandCoordinations", String.valueOf(lexicalRequest.isExpandCoordinations())));
-		params.add(new BasicNameValuePair("detectNegation", String.valueOf(lexicalRequest.isDetectNegations())));
-		params.add(new BasicNameValuePair("checkSpelling", String.valueOf(lexicalRequest.isCheckSpelling())));
-		params.add(new BasicNameValuePair("extractEntitites", String.valueOf(lexicalRequest.isExtractEntities())));
-
+		params.add(new BasicNameValuePair("text", entityRequest.getText()));
+		params.add(new BasicNameValuePair("expandAbbreviations", String.valueOf(entityRequest.isExpandAbbreviations())));
+		params.add(new BasicNameValuePair("expandCoordinations", String.valueOf(entityRequest.isExpandCoordinations())));
+		params.add(new BasicNameValuePair("detectNegation", String.valueOf(entityRequest.isDetectNegations())));
+		params.add(new BasicNameValuePair("checkSpelling", String.valueOf(entityRequest.isCheckSpelling())));
+		params.add(new BasicNameValuePair("extractEntitites", String.valueOf(entityRequest.isExtractEntities())));
+		
 		Reader reader = null;
 		try {
 			post.setEntity(new UrlEncodedFormEntity(params));
 			HttpResponse response = httpClient.execute(post);
 			reader = new InputStreamReader(response.getEntity().getContent(), "UTF8");
-
-			//System.out.println(IOUtils.toString(reader));
-
-			JsonObject obj = parser.parse(reader).getAsJsonObject();
-
-			Map<String, List<Map<String, Object>>> jsmap = gson.fromJson(obj, type);
-
-			if (jsmap != null) {
-				List<Map<String, Object>> entries = jsmap.get("entries");
-				lexicalResponse.setEntries(entries.stream().map(entry -> LexicalEntry.create(entry)).collect(Collectors.toList()));
-			}
+			
+			Map<String, List<LexicalEntry>> result = mapper.readValue(reader, new TypeReference<Map<String, List<LexicalEntry>>>() {
+			});
+			
+			lexicalResponse.setEntries(result.get("entries"));
 		}
 		catch (Exception e) {
-			e.printStackTrace();
 			log.error(e);
 		}
 		finally {
@@ -287,10 +237,10 @@ public class LexicalClient {
 					reader.close();
 				}
 				catch (IOException e) {
+					log.error(e);
 				}
 			}
 		}
 		return lexicalResponse;
 	}
-
 }

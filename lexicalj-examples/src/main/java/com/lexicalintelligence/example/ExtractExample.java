@@ -20,18 +20,15 @@ import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.extract.ExtractRequest;
 import com.lexicalintelligence.extract.ExtractResponse;
 
-public class LexicalClientEntitiesExample {
+public class ExtractExample {
 	public static void main(String[] args) {
-		// Connection to lexical server
-		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/lexicon/mesh");
-
-		// Text to be processed
-		ExtractRequest lexicalRequest = new ExtractRequest("Happiness and health");
-
-		// Response from the server
-		ExtractResponse lexicalResponse = lexicalClient.submit(lexicalRequest);
-
-		// Process the response
-		lexicalResponse.getEntries().stream().forEach(System.out::println);
+		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
+		
+		ExtractRequest extractRequest = new ExtractRequest("Lexical Intelligence is not a college fraternity.");
+		extractRequest.setDetectNegations(false);
+		
+		ExtractResponse extractResponse = lexical.submit(extractRequest);
+		System.out.println(extractResponse.getEntries());
+		
 	}
 }
