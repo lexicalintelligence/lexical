@@ -215,7 +215,7 @@ public class AddRequestHandler {
 		// Not used by the lexicon
 		// params.add(new BasicNameValuePair("matchPunctuation", String.valueOf(addQuery.isMatchPunctuation())));
 		
-		HttpGet get = new HttpGet(url + "/add/concept?" + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
+		HttpGet get = new HttpGet(url + "/add/entity?" + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
 		Reader reader = null;
 		try {
 			HttpResponse response = httpClient.execute(get);

@@ -17,26 +17,20 @@
 package com.lexicalintelligence.example;
 
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.LexicalEntry;
-import com.lexicalintelligence.add.AddEntryRequest;
-import com.lexicalintelligence.add.AddResponse;
+import com.lexicalintelligence.remove.RemoveEntityRequest;
+import com.lexicalintelligence.remove.RemoveResponse;
 
-public class AddEntryExample {
+public class RemoveEntryExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
 		
-		LexicalEntry entry = new LexicalEntry();
-		entry.setName("Lexical");
-		entry.setSynonym("Lexical Intelligence");
-		entry.setCaseSensitive(true);
-		entry.setOrderSensitive(true);
-		entry.setMatchPunctuation(true);
-		entry.setMatchStopwords(true);
-		entry.setStemmed(false);
+		RemoveEntityRequest request = new RemoveEntityRequest();
+		request.setName("Lexical");
+		request.setSynonym("Lexical Intelligence");
 		
-		AddResponse response = lexical.submit(new AddEntryRequest(entry));
+		RemoveResponse response = lexical.submit(request);
 		
-		System.out.println(response.isAdded());
+		System.out.println(response.isRemoved());
 		
 	}
 }

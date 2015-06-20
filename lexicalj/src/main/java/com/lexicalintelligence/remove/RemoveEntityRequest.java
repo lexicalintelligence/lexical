@@ -17,12 +17,13 @@
 package com.lexicalintelligence.remove;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class RemoveEntityRequest extends RemoveRequest {
 	public RemoveEntityRequest() {
 		super(RemoveRequest.Type.Entity);
-		items = new ArrayList<>(2);
+		items = new ArrayList<>(Arrays.asList("", ""));
 	}
 	
 	public void setName(String name) {
