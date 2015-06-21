@@ -199,4 +199,26 @@ public class LexicalEntry {
 		}
 		return this;
 	}
+	
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(int id) {
+		this.id = id;
+	}
+	
+	/**
+	 * @param start the start to set
+	 */
+	public void setStart(int start) {
+		this.start = start;
+	}
+	
+	/**
+	 * @param end the end to set
+	 */
+	public void setEnd(int end) {
+		this.end = end;
+	}
+	
 }

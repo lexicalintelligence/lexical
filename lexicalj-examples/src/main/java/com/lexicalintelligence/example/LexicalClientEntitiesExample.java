@@ -24,14 +24,23 @@ public class LexicalClientEntitiesExample {
 	public static void main(String[] args) {
 		// Connection to lexical server
 		LexicalClient lexicalClient = new LexicalClient("http://localhost:8080/lexicon/mesh");
-
+		
 		// Text to be processed
-		ExtractRequest lexicalRequest = new ExtractRequest("Happiness and health");
-
+		ExtractRequest lexicalRequest = new ExtractRequest("Happiness and health (HH)");
+		lexicalRequest.setExpandAbbreviations(true);
+		
 		// Response from the server
 		ExtractResponse lexicalResponse = lexicalClient.submit(lexicalRequest);
-
+		
 		// Process the response
 		lexicalResponse.getEntries().stream().forEach(System.out::println);
+		
+		lexicalRequest = new ExtractRequest("Happiness and health (HH)");
+		lexicalRequest.setExtractEntities(false);
+		
+		lexicalResponse = lexicalClient.submit(lexicalRequest);
+		
+		lexicalResponse.getEntries().stream().forEach(System.out::println);
+		
 	}
 }

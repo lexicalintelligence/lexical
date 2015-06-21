@@ -215,7 +215,7 @@ public class LexicalClient {
 		params.add(new BasicNameValuePair("expandCoordinations", String.valueOf(entityRequest.isExpandCoordinations())));
 		params.add(new BasicNameValuePair("detectNegation", String.valueOf(entityRequest.isDetectNegations())));
 		params.add(new BasicNameValuePair("checkSpelling", String.valueOf(entityRequest.isCheckSpelling())));
-		params.add(new BasicNameValuePair("extractEntitites", String.valueOf(entityRequest.isExtractEntities())));
+		params.add(new BasicNameValuePair("extractEntities", String.valueOf(entityRequest.isExtractEntities())));
 		
 		Reader reader = null;
 		try {
