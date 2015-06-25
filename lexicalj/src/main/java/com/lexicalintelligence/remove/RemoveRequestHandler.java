@@ -33,14 +33,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.lexicalintelligence.LexicalEntry;
-import com.lexicalintelligence.add.AddEntryRequest;
-import com.lexicalintelligence.add.AddIdiomsRequest;
-import com.lexicalintelligence.add.AddNegationsRequest;
-import com.lexicalintelligence.add.AddResponse;
-import com.lexicalintelligence.add.AddSpellingRequest;
-import com.lexicalintelligence.add.AddStopwordsRequest;
-
 public class RemoveRequestHandler {
 	private Log log = LogFactory.getLog(RemoveRequestHandler.class);
 	
@@ -106,7 +98,7 @@ public class RemoveRequestHandler {
 		return removeResponse;
 	}
 	
-	public AddResponse handleAddNegationsRequest(HttpClient httpClient, String url, AddNegationsRequest request) {
+	/*public AddResponse handleAddNegationsRequest(HttpClient httpClient, String url, AddNegationsRequest request) {
 		AddResponse addResponse = new AddResponse();
 		if (request == null) {
 			return addResponse;
@@ -265,5 +257,5 @@ public class RemoveRequestHandler {
 			}
 		}
 		return addResponse;
-	}
+	}*/
 }

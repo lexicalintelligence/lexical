@@ -17,11 +17,13 @@
 package com.lexicalintelligence.add;
 
 import com.lexicalintelligence.LexicalEntry;
+import com.lexicalintelligence.request.RequestType;
 
-public class AddEntryRequest {
+public class AddEntryRequest extends AddRequest {
 	private LexicalEntry entry;
 	
 	public AddEntryRequest(LexicalEntry entry) {
+		super(RequestType.Entity);
 		this.entry = entry;
 	}
 	

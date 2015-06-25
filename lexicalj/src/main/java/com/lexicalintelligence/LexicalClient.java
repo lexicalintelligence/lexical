@@ -39,14 +39,9 @@ import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
-import com.lexicalintelligence.add.AddCoordinationsRequest;
-import com.lexicalintelligence.add.AddEntryRequest;
-import com.lexicalintelligence.add.AddIdiomsRequest;
-import com.lexicalintelligence.add.AddNegationsRequest;
+import com.lexicalintelligence.add.AddRequest;
 import com.lexicalintelligence.add.AddRequestHandler;
 import com.lexicalintelligence.add.AddResponse;
-import com.lexicalintelligence.add.AddSpellingRequest;
-import com.lexicalintelligence.add.AddStopwordsRequest;
 import com.lexicalintelligence.extract.ExtractRequest;
 import com.lexicalintelligence.extract.ExtractResponse;
 import com.lexicalintelligence.get.GetCoordinationsResponse;
@@ -79,28 +74,8 @@ public class LexicalClient {
 		this.url = url;
 	}
 	
-	public AddResponse submit(AddEntryRequest request) {
-		return AddRequestHandler.get().handleAddEntryRequest(httpClient, url, request);
-	}
-	
-	public AddResponse submit(AddCoordinationsRequest request) {
-		return AddRequestHandler.get().handleAddCoordinationRequest(httpClient, url, request);
-	}
-	
-	public AddResponse submit(AddNegationsRequest request) {
-		return AddRequestHandler.get().handleAddNegationsRequest(httpClient, url, request);
-	}
-	
-	public AddResponse submit(AddIdiomsRequest request) {
-		return AddRequestHandler.get().handleAddIdiomsRequest(httpClient, url, request);
-	}
-	
-	public AddResponse submit(AddStopwordsRequest request) {
-		return AddRequestHandler.get().handleAddStopwordsRequest(httpClient, url, request);
-	}
-	
-	public AddResponse submit(AddSpellingRequest request) {
-		return AddRequestHandler.get().handleAddSpellingRequest(httpClient, url, request);
+	public AddResponse submit(AddRequest request) {
+		return AddRequestHandler.get().handleAddRequest(httpClient, url, request);
 	}
 	
 	public SaveResponse submit(SaveRequestType type) {

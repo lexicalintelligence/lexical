@@ -29,15 +29,13 @@ public class RemoveExample {
 		Collection<String> items = new ArrayList<>();
 		items.add("night owl");
 		
-		RemoveResponse removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Coordinations) {
-		}.setItems(items));
+		RemoveResponse removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Coordinations).setItems(items));
 		
 		items.clear();
 		items.add("tpyo");
 		items.add("typo");
 		
-		removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Spelling) {
-		}.setItems(items));
+		removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Spelling).setItems(items));
 		
 		System.out.println(removeResponse.isRemoved());
 		

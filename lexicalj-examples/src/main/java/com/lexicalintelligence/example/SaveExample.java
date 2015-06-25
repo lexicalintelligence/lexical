@@ -16,10 +16,11 @@
 
 package com.lexicalintelligence.example;
 
+import static com.lexicalintelligence.add.AddRequestBuilders.addCoordinationsRequest;
+
 import java.util.Arrays;
 
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.add.AddCoordinationsRequest;
 import com.lexicalintelligence.add.AddResponse;
 import com.lexicalintelligence.get.GetCoordinationsResponse;
 import com.lexicalintelligence.get.GetRequestType;
@@ -30,7 +31,7 @@ public class SaveExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
 		
-		AddResponse addResponse = lexical.submit(new AddCoordinationsRequest(Arrays.asList("night owl,barn owl")));
+		AddResponse addResponse = lexical.submit(addCoordinationsRequest(Arrays.asList("night owl,barn owl")));
 		System.out.println(addResponse.isAdded());
 		
 		SaveResponse saveResponse = lexical.submit(SaveRequestType.Coordinations);

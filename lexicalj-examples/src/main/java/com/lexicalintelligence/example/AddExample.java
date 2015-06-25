@@ -16,37 +16,34 @@
 
 package com.lexicalintelligence.example;
 
+import static com.lexicalintelligence.add.AddRequestBuilders.addCoordinationsRequest;
+import static com.lexicalintelligence.add.AddRequestBuilders.addIdiomsRequest;
+import static com.lexicalintelligence.add.AddRequestBuilders.addNegationsRequest;
+import static com.lexicalintelligence.add.AddRequestBuilders.addSpellingsRequest;
+import static com.lexicalintelligence.add.AddRequestBuilders.addStopwordsRequest;
+
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.add.AddCoordinationsRequest;
-import com.lexicalintelligence.add.AddIdiomsRequest;
-import com.lexicalintelligence.add.AddNegationsRequest;
 import com.lexicalintelligence.add.AddResponse;
-import com.lexicalintelligence.add.AddSpellingRequest;
-import com.lexicalintelligence.add.AddStopwordsRequest;
 
 public class AddExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
 		
-		AddResponse response = lexical.submit(new AddCoordinationsRequest(Arrays.asList("night owl,barn owl")));
+		AddResponse response = lexical.submit(addCoordinationsRequest(Arrays.asList("night owl,barn owl")));
 		System.out.println(response.isAdded());
 		
-		response = lexical.submit(new AddNegationsRequest(Arrays.asList("nyet")));
+		response = lexical.submit(addNegationsRequest(Arrays.asList("nyet")));
 		System.out.println(response.isAdded());
 		
-		response = lexical.submit(new AddIdiomsRequest(Arrays.asList("head over heels")));
+		response = lexical.submit(addIdiomsRequest(Arrays.asList("head over heels")));
 		System.out.println(response.isAdded());
 		
-		response = lexical.submit(new AddStopwordsRequest(Arrays.asList("moreoverthanwhich")));
+		response = lexical.submit(addStopwordsRequest(Arrays.asList("moreoverthanwhich")));
 		System.out.println(response.isAdded());
 		
-		Map<String, String> dictionary = new HashMap<>();
-		dictionary.put("tpyo", "typo");
-		response = lexical.submit(new AddSpellingRequest(dictionary));
+		response = lexical.submit(addSpellingsRequest(Arrays.asList("tpyo", "typo")));
 		System.out.println(response.isAdded());
 		
 	}

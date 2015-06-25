@@ -14,38 +14,13 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.remove;
+package com.lexicalintelligence.request;
 
-import java.util.Collection;
-import java.util.Collections;
-
-public class RemoveRequest {
-	public static enum Type {
-		Coordinations,
-		Negations,
-		Idioms,
-		Stopwords,
-		Entity,
-		Spelling;
-	}
-	
-	private Type type;
-	protected Collection<String> items = Collections.emptyList();
-	
-	public RemoveRequest(Type type) {
-		this.type = type;
-	}
-	
-	public RemoveRequest setItems(Collection<String> items) {
-		this.items = items;
-		return this;
-	}
-	
-	public Collection<String> getItems() {
-		return items;
-	}
-	
-	public final Type getType() {
-		return type;
-	}
+public enum RequestType {
+	Coordinations,
+	Negations,
+	Idioms,
+	Stopwords,
+	Spellings,
+	Entity;
 }
