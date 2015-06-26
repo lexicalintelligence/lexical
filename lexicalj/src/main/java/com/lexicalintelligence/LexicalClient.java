@@ -21,10 +21,12 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -40,17 +42,12 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 import com.lexicalintelligence.add.AddRequest;
-import com.lexicalintelligence.add.AddRequestHandler;
 import com.lexicalintelligence.add.AddResponse;
 import com.lexicalintelligence.extract.ExtractRequest;
 import com.lexicalintelligence.extract.ExtractResponse;
-import com.lexicalintelligence.get.GetCoordinationsResponse;
-import com.lexicalintelligence.get.GetIdiomsResponse;
-import com.lexicalintelligence.get.GetNegationsResponse;
-import com.lexicalintelligence.get.GetRequestType;
+import com.lexicalintelligence.get.GetRequest;
 import com.lexicalintelligence.get.GetResponse;
 import com.lexicalintelligence.get.GetSpellingsResponse;
-import com.lexicalintelligence.get.GetStopwordsResponse;
 import com.lexicalintelligence.remove.RemoveRequest;
 import com.lexicalintelligence.remove.RemoveRequestHandler;
 import com.lexicalintelligence.remove.RemoveResponse;
@@ -68,14 +65,55 @@ public class LexicalClient {
 	private String extract = "/extract";
 	private String get = "/get/";
 	private String delete = "/remove?";
+	private String add_url;
 	
 	public LexicalClient(String url) {
 		System.setProperty("jsse.enableSNIExtension", "false");
 		this.url = url;
+		this.add_url = url + "/add/";
 	}
 	
 	public AddResponse submit(AddRequest request) {
-		return AddRequestHandler.get().handleAddRequest(httpClient, url, request);
+		AddResponse addResponse = new AddResponse();
+		if (request == null) {
+			return addResponse;
+		}
+		
+		/*
+		 * FIXME have to handle Spellings and Entity separately
+		 * switch (request.getType()) {
+			case Coordinations:
+			case Negations:
+			case Idioms:
+			case Stopwords:
+				return (T) new GetResponse(mapper.readValue(reader, new TypeReference<List<String>>() {
+				}));
+			case Spellings:
+				return (T) new GetSpellingsResponse(mapper.readValue(reader, new TypeReference<Map<String, String>>() {
+				}));				
+		}*/
+		
+		List<NameValuePair> params = Collections.singletonList(new BasicNameValuePair(request.getType().toLowerCase(),
+						StringUtils.join(request.getItems(), ",")));
+		Reader reader = null;
+		try {
+			HttpResponse response = httpClient.execute(new HttpGet(add_url + request.getType().toLowerCase() + "?"
+							+ URLEncodedUtils.format(params, StandardCharsets.UTF_8)));
+			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
+			addResponse.setAdded(Boolean.valueOf(IOUtils.toString(reader)));
+		}
+		catch (Exception e) {
+			log.error(e);
+		}
+		finally {
+			try {
+				reader.close();
+			}
+			catch (Exception e) {
+				log.error(e);
+			}
+		}
+		return addResponse;
 	}
 	
 	public SaveResponse submit(SaveRequestType type) {
@@ -105,7 +143,7 @@ public class LexicalClient {
 		return RemoveRequestHandler.get().handleRemoveRequest(httpClient, url, removeRequest);
 	}
 	
-	public RemoveResponse remove(String name, String synonym) {
+	/*public RemoveResponse remove(String name, String synonym) {
 		RemoveResponse removeResponse = new RemoveResponse();
 		
 		if (name == null && synonym == null) {
@@ -136,29 +174,23 @@ public class LexicalClient {
 			}
 		}
 		return removeResponse;
-	}
+	}*/
 	
 	@SuppressWarnings("unchecked")
-	public <T extends GetResponse> T submit(GetRequestType type) {
+	public <T extends GetResponse> T submit(GetRequest request) {
 		Reader reader = null;
 		try {
-			HttpResponse response = httpClient.execute(new HttpGet(url + get + type.toString().toLowerCase()));
+			HttpResponse response = httpClient.execute(new HttpGet(url + get + request.getType().toString().toLowerCase()));
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
-			switch (type) {
+			switch (request.getType()) {
 				case Coordinations:
-					return (T) new GetCoordinationsResponse(mapper.readValue(reader, new TypeReference<List<String>>() {
-					}));
 				case Negations:
-					return (T) new GetNegationsResponse(mapper.readValue(reader, new TypeReference<List<String>>() {
-					}));
 				case Idioms:
-					return (T) new GetIdiomsResponse(mapper.readValue(reader, new TypeReference<List<String>>() {
-					}));
-				case Spelling:
-					return (T) new GetSpellingsResponse(mapper.readValue(reader, new TypeReference<Map<String, String>>() {
-					}));
 				case Stopwords:
-					return (T) new GetStopwordsResponse(mapper.readValue(reader, new TypeReference<List<String>>() {
+					return (T) new GetResponse(mapper.readValue(reader, new TypeReference<List<String>>() {
+					}));
+				case Spellings:
+					return (T) new GetSpellingsResponse(mapper.readValue(reader, new TypeReference<Map<String, String>>() {
 					}));
 			}
 		}

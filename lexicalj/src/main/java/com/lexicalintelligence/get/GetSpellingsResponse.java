@@ -21,14 +21,15 @@ import java.util.Map;
 
 public class GetSpellingsResponse extends GetResponse {
 	private Map<String, String> spellings = Collections.emptyMap();
-
+	
 	public GetSpellingsResponse(Map<String, String> spellings) {
+		super(null);
 		if (spellings != null) {
 			this.spellings = spellings;
 		}
 	}
-
-	public Map<String, String> getSpellings() {
+	
+	public final Map<String, String> getSpellings() {
 		return spellings;
 	}
 }

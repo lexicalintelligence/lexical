@@ -19,27 +19,23 @@ package com.lexicalintelligence.add;
 import java.util.Collection;
 import java.util.Collections;
 
-import com.lexicalintelligence.request.RequestType;
+import com.lexicalintelligence.request.LexicalRequest;
 
-public class AddRequest {
-	
-	private RequestType type;
-	protected Collection<String> items = Collections.emptyList();
-	
+public class AddRequest extends LexicalRequest {
 	public AddRequest(RequestType type) {
-		this.type = type;
+		super(type);
 	}
 	
+	private Collection<String> items = Collections.emptyList();
+	
 	public AddRequest setItems(Collection<String> items) {
-		this.items = items;
+		if (items != null) {
+			this.items = items;
+		}
 		return this;
 	}
 	
-	public Collection<String> getItems() {
+	public final Collection<String> getItems() {
 		return items;
-	}
-	
-	public final RequestType getType() {
-		return type;
 	}
 }

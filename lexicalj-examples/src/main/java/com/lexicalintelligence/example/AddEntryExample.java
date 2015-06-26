@@ -27,11 +27,11 @@ public class AddEntryExample {
 		
 		LexicalEntry entry = new LexicalEntry();
 		entry.setName("Lexical");
-		entry.setSynonym("Lexical Intelligence");
+		entry.setSynonym("json");
 		entry.setCaseSensitive(true);
 		entry.setOrderSensitive(true);
 		entry.setMatchPunctuation(true);
-		entry.setMatchStopwords(true);
+		entry.setMatchStopwords(false);
 		entry.setStemmed(false);
 		
 		AddResponse response = lexical.submit(new AddEntryRequest(entry));

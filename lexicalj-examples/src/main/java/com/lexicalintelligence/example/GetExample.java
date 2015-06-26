@@ -16,31 +16,32 @@
 
 package com.lexicalintelligence.example;
 
+import static com.lexicalintelligence.get.GetRequestBuilders.getCoordinationsRequest;
+import static com.lexicalintelligence.get.GetRequestBuilders.getIdiomsRequest;
+import static com.lexicalintelligence.get.GetRequestBuilders.getNegationsRequest;
+import static com.lexicalintelligence.get.GetRequestBuilders.getSpellingsRequest;
+import static com.lexicalintelligence.get.GetRequestBuilders.getStopwordsRequest;
+
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.get.GetCoordinationsResponse;
-import com.lexicalintelligence.get.GetIdiomsResponse;
-import com.lexicalintelligence.get.GetNegationsResponse;
-import com.lexicalintelligence.get.GetRequestType;
+import com.lexicalintelligence.get.GetResponse;
 import com.lexicalintelligence.get.GetSpellingsResponse;
-import com.lexicalintelligence.get.GetStopwordsResponse;
 
 public class GetExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
-
-		GetSpellingsResponse gsr = lexical.submit(GetRequestType.Spelling);
+		
+		GetSpellingsResponse gsr = lexical.submit(getSpellingsRequest());
 		System.out.println(gsr.getSpellings());
-
-		GetCoordinationsResponse gcr = lexical.submit(GetRequestType.Coordinations);
-		System.out.println(gcr.getCoordinations());
-
-		GetIdiomsResponse gir = lexical.submit(GetRequestType.Idioms);
-		System.out.println(gir.getIdioms());
-
-		GetNegationsResponse gnr = lexical.submit(GetRequestType.Negations);
-		System.out.println(gnr.getNegations());
-
-		GetStopwordsResponse gtr = lexical.submit(GetRequestType.Stopwords);
-		System.out.println(gtr.getStopwords());
+		
+		GetResponse gr = lexical.submit(getCoordinationsRequest());
+		System.out.println(gr.getItems());
+		
+		gr = lexical.submit(getIdiomsRequest());
+		System.out.println(gr.getItems());
+		gr = lexical.submit(getNegationsRequest());
+		System.out.println(gr.getItems());
+		
+		gr = lexical.submit(getStopwordsRequest());
+		System.out.println(gr.getItems());
 	}
 }

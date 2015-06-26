@@ -16,5 +16,19 @@
 
 package com.lexicalintelligence.get;
 
-public abstract class GetResponse {
+import java.util.Collection;
+import java.util.Collections;
+
+public class GetResponse {
+	private Collection<String> items = Collections.emptyList();
+	
+	public GetResponse(Collection<String> items) {
+		if (items != null) {
+			this.items = items;
+		}
+	}
+	
+	public final Collection<String> getItems() {
+		return items;
+	}
 }

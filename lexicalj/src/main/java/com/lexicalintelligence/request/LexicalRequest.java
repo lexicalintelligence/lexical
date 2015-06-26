@@ -14,21 +14,29 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.get;
+package com.lexicalintelligence.request;
 
-import java.util.Collections;
-import java.util.List;
-
-public class GetIdiomsResponse extends GetResponse {
-	private List<String> idioms = Collections.emptyList();
-
-	public GetIdiomsResponse(List<String> idioms) {
-		if (idioms != null) {
-			this.idioms = idioms;
+public abstract class LexicalRequest {
+	public static enum RequestType {
+		Coordinations,
+		Negations,
+		Idioms,
+		Stopwords,
+		Spellings,
+		Entity;
+		
+		public String toLowerCase() {
+			return toString().toLowerCase();
 		}
 	}
-
-	public List<String> getIdioms() {
-		return idioms;
+	
+	private RequestType type;
+	
+	public LexicalRequest(RequestType type) {
+		this.type = type;
+	}
+	
+	public final RequestType getType() {
+		return type;
 	}
 }

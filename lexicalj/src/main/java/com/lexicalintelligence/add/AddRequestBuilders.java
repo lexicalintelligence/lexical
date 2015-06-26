@@ -19,7 +19,7 @@ package com.lexicalintelligence.add;
 import java.util.Collection;
 
 import com.lexicalintelligence.LexicalEntry;
-import com.lexicalintelligence.request.RequestType;
+import com.lexicalintelligence.request.LexicalRequest.RequestType;
 
 public interface AddRequestBuilders {
 	public static AddRequest addCoordinationsRequest(Collection<String> items) {

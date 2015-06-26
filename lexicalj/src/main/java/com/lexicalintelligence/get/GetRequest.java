@@ -14,13 +14,29 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.request;
+package com.lexicalintelligence.get;
 
-public enum RequestType {
-	Coordinations,
-	Negations,
-	Idioms,
-	Stopwords,
-	Spellings,
-	Entity;
+import java.util.Collection;
+import java.util.Collections;
+
+import com.lexicalintelligence.request.LexicalRequest;
+
+public class GetRequest extends LexicalRequest {
+	private Collection<String> items = Collections.emptyList();
+	
+	public GetRequest(RequestType type) {
+		super(type);
+	}
+	
+	public GetRequest setItems(Collection<String> items) {
+		if (items != null) {
+			this.items = items;
+		}
+		return this;
+	}
+	
+	public final Collection<String> getItems() {
+		return items;
+	}
+	
 }

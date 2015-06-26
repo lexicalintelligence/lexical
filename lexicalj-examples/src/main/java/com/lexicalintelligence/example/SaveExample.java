@@ -17,13 +17,13 @@
 package com.lexicalintelligence.example;
 
 import static com.lexicalintelligence.add.AddRequestBuilders.addCoordinationsRequest;
+import static com.lexicalintelligence.get.GetRequestBuilders.getCoordinationsRequest;
 
 import java.util.Arrays;
 
 import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.add.AddResponse;
-import com.lexicalintelligence.get.GetCoordinationsResponse;
-import com.lexicalintelligence.get.GetRequestType;
+import com.lexicalintelligence.get.GetResponse;
 import com.lexicalintelligence.save.SaveRequestType;
 import com.lexicalintelligence.save.SaveResponse;
 
@@ -37,7 +37,7 @@ public class SaveExample {
 		SaveResponse saveResponse = lexical.submit(SaveRequestType.Coordinations);
 		System.out.println(saveResponse.isSaved());
 		
-		GetCoordinationsResponse gcr = lexical.submit(GetRequestType.Coordinations);
-		System.out.println(gcr.getCoordinations());
+		GetResponse gcr = lexical.submit(getCoordinationsRequest());
+		System.out.println(gcr.getItems());
 	}
 }
