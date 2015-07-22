@@ -36,7 +36,7 @@ public interface RemoveRequestBuilders {
 	}
 	
 	public static RemoveRequest removeSpellingsRequest(Collection<String> items) {
-		return new RemoveRequest(RemoveRequest.Type.Spelling).setItems(items);
+		return new RemoveRequest(RemoveRequest.Type.Spellings).setItems(items);
 	}
 	
 	public static RemoveRequest removeEntityRequest(Collection<String> items) {

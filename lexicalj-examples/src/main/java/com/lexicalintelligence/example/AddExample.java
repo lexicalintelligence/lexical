@@ -26,6 +26,7 @@ import java.util.Arrays;
 
 import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.add.AddResponse;
+import com.lexicalintelligence.extract.ExtractRequest;
 
 public class AddExample {
 	public static void main(String[] args) {
@@ -43,8 +44,10 @@ public class AddExample {
 		response = lexical.submit(addStopwordsRequest(Arrays.asList("moreoverthanwhich")));
 		System.out.println(response.isAdded());
 		
-		response = lexical.submit(addSpellingsRequest(Arrays.asList("tpyo", "typo")));
+		response = lexical.submit(addSpellingsRequest(Arrays.asList("cacner", "cancer")));
 		System.out.println(response.isAdded());
+		
+		System.out.println(lexical.submit(new ExtractRequest("cacner").setCheckSpelling(true)).getEntries());
 		
 	}
 }

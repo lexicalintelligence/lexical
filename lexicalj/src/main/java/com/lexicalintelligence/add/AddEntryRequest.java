@@ -16,7 +16,7 @@
 
 package com.lexicalintelligence.add;
 
-import java.util.Collection;
+import java.util.Arrays;
 
 import com.lexicalintelligence.LexicalEntry;
 
@@ -26,11 +26,7 @@ public class AddEntryRequest extends AddRequest {
 	public AddEntryRequest(LexicalEntry entry) {
 		super(RequestType.Entity);
 		this.entry = entry;
-	}
-	
-	@Override
-	public AddRequest setItems(Collection<String> items) {
-		return super.setItems(null);
+		setItems(Arrays.asList(entry.getName(), entry.getSynonym()));
 	}
 	
 	public final LexicalEntry getEntry() {

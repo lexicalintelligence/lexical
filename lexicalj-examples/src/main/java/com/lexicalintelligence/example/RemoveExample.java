@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.lexicalintelligence.LexicalClient;
+import com.lexicalintelligence.extract.ExtractRequest;
 import com.lexicalintelligence.remove.RemoveRequest;
 import com.lexicalintelligence.remove.RemoveResponse;
 
@@ -31,13 +32,17 @@ public class RemoveExample {
 		
 		RemoveResponse removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Coordinations).setItems(items));
 		
-		items.clear();
-		items.add("tpyo");
-		items.add("typo");
+		System.out.println(lexical.submit(new ExtractRequest("cacner").setCheckSpelling(true)).getEntries());
 		
-		removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Spelling).setItems(items));
+		items.clear();
+		items.add("cacner");
+		items.add("cancer");
+		
+		removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Spellings).setItems(items));
 		
 		System.out.println(removeResponse.isRemoved());
+		
+		System.out.println(lexical.submit(new ExtractRequest("cacner").setCheckSpelling(true)).getEntries());
 		
 	}
 }

@@ -64,7 +64,7 @@ public class RemoveRequestHandler {
 			case Negations:
 				params.add(new BasicNameValuePair("negations", StringUtils.join(request.getItems(), ",")));
 				break;
-			case Spelling:
+			case Spellings:
 				params.add(new BasicNameValuePair("spellings", StringUtils.join(request.getItems(), ",")));
 				break;
 			case Stopwords:
@@ -80,6 +80,7 @@ public class RemoveRequestHandler {
 		Reader reader = null;
 		try {
 			HttpResponse response = client.execute(new HttpGet(url + URLEncodedUtils.format(params, StandardCharsets.UTF_8)));
+			System.out.println(url + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			boolean added = Boolean.valueOf(IOUtils.toString(reader));
 			removeResponse.setRemoved(added);

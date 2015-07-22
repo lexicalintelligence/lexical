@@ -20,23 +20,26 @@ import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.LexicalEntry;
 import com.lexicalintelligence.add.AddEntryRequest;
 import com.lexicalintelligence.add.AddResponse;
+import com.lexicalintelligence.extract.ExtractRequest;
 
 public class AddEntryExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
 		
 		LexicalEntry entry = new LexicalEntry();
-		entry.setName("Lexical");
-		entry.setSynonym("json");
-		entry.setCaseSensitive(true);
-		entry.setOrderSensitive(true);
-		entry.setMatchPunctuation(true);
+		entry.setName("Kirk");
+		entry.setSynonym("kirk");
+		entry.setCaseSensitive(false);
+		entry.setOrderSensitive(false);
+		entry.setMatchPunctuation(false);
 		entry.setMatchStopwords(false);
-		entry.setStemmed(false);
+		entry.setStemmed(true);
 		
 		AddResponse response = lexical.submit(new AddEntryRequest(entry));
 		
 		System.out.println(response.isAdded());
+		
+		System.out.println(lexical.submit(new ExtractRequest("kirk")).getEntries());
 		
 	}
 }

@@ -41,6 +41,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
+import com.lexicalintelligence.add.AddEntryRequest;
 import com.lexicalintelligence.add.AddRequest;
 import com.lexicalintelligence.add.AddResponse;
 import com.lexicalintelligence.extract.ExtractRequest;
@@ -78,27 +79,30 @@ public class LexicalClient {
 		if (request == null) {
 			return addResponse;
 		}
+		List<NameValuePair> params = Collections.emptyList();
 		
-		/*
-		 * FIXME have to handle Spellings and Entity separately
-		 * switch (request.getType()) {
-			case Coordinations:
-			case Negations:
-			case Idioms:
-			case Stopwords:
-				return (T) new GetResponse(mapper.readValue(reader, new TypeReference<List<String>>() {
-				}));
-			case Spellings:
-				return (T) new GetSpellingsResponse(mapper.readValue(reader, new TypeReference<Map<String, String>>() {
-				}));				
-		}*/
+		switch (request.getType()) {
+			case Entity:
+				LexicalEntry entry = ((AddEntryRequest) request).getEntry();
+				params = new ArrayList<>();
+				params.add(new BasicNameValuePair("name", entry.getName()));
+				params.add(new BasicNameValuePair("synonym", entry.getSynonym()));
+				params.add(new BasicNameValuePair("matchWordOrder", String.valueOf(entry.isOrderSensitive())));
+				params.add(new BasicNameValuePair("caseSensitive", String.valueOf(entry.isCaseSensitive())));
+				params.add(new BasicNameValuePair("matchStopwords", String.valueOf(entry.isMatchStopwords())));
+				params.add(new BasicNameValuePair("matchPunctuation", String.valueOf(entry.isMatchPunctuation())));
+				params.add(new BasicNameValuePair("stem", String.valueOf(entry.isStemmed())));
+				break;
+			default:
+				params = Collections.singletonList(new BasicNameValuePair(request.getType().toLowerCase(), StringUtils.join(request.getItems(), ",")));
+				break;
+		}
 		
-		List<NameValuePair> params = Collections.singletonList(new BasicNameValuePair(request.getType().toLowerCase(),
-						StringUtils.join(request.getItems(), ",")));
 		Reader reader = null;
 		try {
 			HttpResponse response = httpClient.execute(new HttpGet(add_url + request.getType().toLowerCase() + "?"
 							+ URLEncodedUtils.format(params, StandardCharsets.UTF_8)));
+			System.out.println(add_url + request.getType().toLowerCase() + "?" + URLEncodedUtils.format(params, StandardCharsets.UTF_8));
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			addResponse.setAdded(Boolean.valueOf(IOUtils.toString(reader)));
 		}

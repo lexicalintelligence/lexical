@@ -28,19 +28,20 @@ public class LexicalClientEntitiesExample {
 		// Text to be processed
 		ExtractRequest lexicalRequest = new ExtractRequest("Happiness and health (HH)");
 		lexicalRequest.setExpandAbbreviations(true);
+		lexicalRequest.setExtractEntities(true);
 		
 		// Response from the server
 		ExtractResponse lexicalResponse = lexicalClient.submit(lexicalRequest);
 		
 		// Process the response
-		lexicalResponse.getEntries().stream().forEach(System.out::println);
+		lexicalResponse.getEntries().stream().forEach(e -> System.out.println(e.getId()));
 		
 		lexicalRequest = new ExtractRequest("Happiness and health (HH)");
 		lexicalRequest.setExtractEntities(false);
 		
 		lexicalResponse = lexicalClient.submit(lexicalRequest);
 		
-		lexicalResponse.getEntries().stream().forEach(System.out::println);
+		//lexicalResponse.getEntries().stream().forEach(System.out::println);
 		
 	}
 }

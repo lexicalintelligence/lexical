@@ -26,7 +26,7 @@ public class RemoveRequest {
 		Idioms,
 		Stopwords,
 		Entity,
-		Spelling;
+		Spellings;
 	}
 	
 	private Type type;
