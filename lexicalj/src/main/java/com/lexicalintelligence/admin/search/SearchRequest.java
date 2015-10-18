@@ -14,37 +14,26 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.request;
+package com.lexicalintelligence.admin.search;
 
-import com.lexicalintelligence.LexicalClient;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
-public abstract class LexicalRequest {
-	public static enum RequestType {
-		Coordinations,
-		Negations,
-		Idioms,
-		Stopwords,
-		Spellings,
-		Entity;
-		
-		public String toString() {
-			return super.toString().toLowerCase();
-		}
-	}
+import com.lexicalintelligence.LexicalResponse;
+import com.lexicalintelligence.admin.LexicalAdminClient;
+
+public abstract class SearchRequest {
+	protected final Log log = LogFactory.getLog(SearchRequest.class);
+	protected static final String PATH = "/get";
 	
-	protected LexicalClient client;
-	protected RequestType type;
+	protected LexicalAdminClient client;
 	
-	public LexicalRequest(LexicalClient client) {
+	public SearchRequest(LexicalAdminClient client) {
 		this.client = client;
 	}
 	
-	public LexicalRequest setType(RequestType type) {
-		this.type = type;
-		return this;
-	}
+	public abstract <T extends LexicalResponse> T execute();
 	
-	public final RequestType getType() {
-		return type;
-	}
+	public abstract String getPath();
+	
 }

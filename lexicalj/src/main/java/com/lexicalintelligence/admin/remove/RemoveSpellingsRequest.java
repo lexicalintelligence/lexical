@@ -14,23 +14,25 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.example;
+package com.lexicalintelligence.admin.remove;
 
-import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.remove.RemoveEntityRequest;
-import com.lexicalintelligence.remove.RemoveResponse;
+import java.util.HashSet;
 
-public class RemoveEntryExample {
-	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
-		
-		RemoveEntityRequest request = new RemoveEntityRequest();
-		request.setName("Lexical");
-		request.setSynonym("Lexical Intelligence");
-		
-		RemoveResponse response = lexical.submit(request);
-		
-		System.out.println(response.isRemoved());
-		
+import com.lexicalintelligence.admin.LexicalAdminClient;
+
+public class RemoveSpellingsRequest extends RemoveRequest {
+	public RemoveSpellingsRequest(LexicalAdminClient client) {
+		super(client);
+		items = new HashSet<>();
+	}
+	
+	@Override
+	public String getName() {
+		return "spellings";
+	}
+	
+	@Override
+	public String getPath() {
+		return "/spellings";
 	}
 }

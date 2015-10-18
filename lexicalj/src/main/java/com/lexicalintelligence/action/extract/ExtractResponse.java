@@ -14,37 +14,26 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.request;
+package com.lexicalintelligence.action.extract;
 
-import com.lexicalintelligence.LexicalClient;
+import java.util.Collections;
+import java.util.List;
 
-public abstract class LexicalRequest {
-	public static enum RequestType {
-		Coordinations,
-		Negations,
-		Idioms,
-		Stopwords,
-		Spellings,
-		Entity;
-		
-		public String toString() {
-			return super.toString().toLowerCase();
+import com.lexicalintelligence.LexicalEntry;
+import com.lexicalintelligence.LexicalResponse;
+
+public class ExtractResponse extends LexicalResponse {
+	
+	private List<LexicalEntry> entries = Collections.emptyList();
+	
+	public ExtractResponse setEntries(List<LexicalEntry> entries) {
+		if (entries != null) {
+			this.entries = entries;
 		}
-	}
-	
-	protected LexicalClient client;
-	protected RequestType type;
-	
-	public LexicalRequest(LexicalClient client) {
-		this.client = client;
-	}
-	
-	public LexicalRequest setType(RequestType type) {
-		this.type = type;
 		return this;
 	}
 	
-	public final RequestType getType() {
-		return type;
+	public List<LexicalEntry> getEntries() {
+		return entries;
 	}
 }

@@ -16,24 +16,21 @@
 
 package com.lexicalintelligence.example;
 
-import static com.lexicalintelligence.get.GetRequestBuilders.getCoordinationsRequest;
-import static com.lexicalintelligence.get.GetRequestBuilders.getIdiomsRequest;
-import static com.lexicalintelligence.get.GetRequestBuilders.getNegationsRequest;
-import static com.lexicalintelligence.get.GetRequestBuilders.getSpellingsRequest;
-import static com.lexicalintelligence.get.GetRequestBuilders.getStopwordsRequest;
-
-import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.get.GetResponse;
-import com.lexicalintelligence.get.GetSpellingsResponse;
+import com.lexicalintelligence.admin.LexicalAdminClient;
+import com.lexicalintelligence.admin.search.ListSearchResponse;
+import com.lexicalintelligence.admin.search.MapSearchResponse;
 
 public class GetExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
+		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:8080/lexicon/mesh");
 		
-		GetSpellingsResponse gsr = lexical.submit(getSpellingsRequest());
-		System.out.println(gsr.getSpellings());
+		ListSearchResponse lsr = lexical.searchStopwords().execute();
+		System.out.println(lsr.getItems());
 		
-		GetResponse gr = lexical.submit(getCoordinationsRequest());
+		MapSearchResponse msr = lexical.searchSpellings().execute();
+		System.out.println(msr.getItems());
+		/*
+		ListSearchResponse gr = lexical.submit(getCoordinationsRequest());
 		System.out.println(gr.getItems());
 		
 		gr = lexical.submit(getIdiomsRequest());
@@ -42,6 +39,6 @@ public class GetExample {
 		System.out.println(gr.getItems());
 		
 		gr = lexical.submit(getStopwordsRequest());
-		System.out.println(gr.getItems());
+		System.out.println(gr.getItems());*/
 	}
 }

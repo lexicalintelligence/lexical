@@ -16,28 +16,30 @@
 
 package com.lexicalintelligence.example;
 
-import static com.lexicalintelligence.add.AddRequestBuilders.addCoordinationsRequest;
-import static com.lexicalintelligence.get.GetRequestBuilders.getCoordinationsRequest;
-
-import java.util.Arrays;
-
-import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.add.AddResponse;
-import com.lexicalintelligence.get.GetResponse;
-import com.lexicalintelligence.save.SaveRequestType;
-import com.lexicalintelligence.save.SaveResponse;
+import com.lexicalintelligence.admin.LexicalAdminClient;
+import com.lexicalintelligence.admin.save.SaveResponse;
 
 public class SaveExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
+		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:8080/lexicon/mesh");
 		
-		AddResponse addResponse = lexical.submit(addCoordinationsRequest(Arrays.asList("night owl,barn owl")));
-		System.out.println(addResponse.isAdded());
+		SaveResponse response = lexical.saveLexicon().execute();
+		System.out.println(response.success());
 		
-		SaveResponse saveResponse = lexical.submit(SaveRequestType.Coordinations);
-		System.out.println(saveResponse.isSaved());
+		response = lexical.saveCoordinations().execute();
+		System.out.println(response.success());
 		
-		GetResponse gcr = lexical.submit(getCoordinationsRequest());
-		System.out.println(gcr.getItems());
+		response = lexical.saveIdioms().execute();
+		System.out.println(response.success());
+		
+		response = lexical.saveNegations().execute();
+		System.out.println(response.success());
+		
+		response = lexical.saveSpellings().execute();
+		System.out.println(response.success());
+		
+		response = lexical.saveStopwords().execute();
+		System.out.println(response.success());
+		
 	}
 }

@@ -16,33 +16,31 @@
 
 package com.lexicalintelligence.example;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.extract.ExtractRequest;
-import com.lexicalintelligence.remove.RemoveRequest;
-import com.lexicalintelligence.remove.RemoveResponse;
+import com.lexicalintelligence.LexicalEntry;
+import com.lexicalintelligence.admin.LexicalAdminClient;
+import com.lexicalintelligence.admin.remove.RemoveResponse;
 
 public class RemoveExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
-		Collection<String> items = new ArrayList<>();
-		items.add("night owl");
+		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:8080/lexicon/mesh");
 		
-		RemoveResponse removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Coordinations).setItems(items));
+		RemoveResponse response = lexical.removeCoordinations("night owl", "barn owl").execute();
+		System.out.println(response.success());
 		
-		System.out.println(lexical.submit(new ExtractRequest("cacner").setCheckSpelling(true)).getEntries());
+		response = lexical.removeStopwords("of", "the", "in", "on").execute();
+		System.out.println(response.success());
 		
-		items.clear();
-		items.add("cacner");
-		items.add("cancer");
+		response = lexical.removeNegations("not", "except").execute();
+		System.out.println(response.success());
 		
-		removeResponse = lexical.submit(new RemoveRequest(RemoveRequest.Type.Spellings).setItems(items));
+		response = lexical.removeIdioms("head over heels").execute();
+		System.out.println(response.success());
 		
-		System.out.println(removeResponse.isRemoved());
+		response = lexical.removeSpellings("cacner", "cancer").execute();
+		System.out.println(response.success());
 		
-		System.out.println(lexical.submit(new ExtractRequest("cacner").setCheckSpelling(true)).getEntries());
+		response = lexical.removeEntry(new LexicalEntry().setName("Brain").setSynonym("cerebrum")).execute();
+		System.out.println(response.success());
 		
 	}
 }

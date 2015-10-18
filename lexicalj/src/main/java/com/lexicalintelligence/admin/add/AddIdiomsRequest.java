@@ -14,37 +14,26 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.request;
+package com.lexicalintelligence.admin.add;
 
-import com.lexicalintelligence.LexicalClient;
+import java.util.HashSet;
 
-public abstract class LexicalRequest {
-	public static enum RequestType {
-		Coordinations,
-		Negations,
-		Idioms,
-		Stopwords,
-		Spellings,
-		Entity;
-		
-		public String toString() {
-			return super.toString().toLowerCase();
-		}
+import com.lexicalintelligence.admin.LexicalAdminClient;
+
+public class AddIdiomsRequest extends AddRequest {
+	
+	public AddIdiomsRequest(LexicalAdminClient client) {
+		super(client);
+		items = new HashSet<>();
 	}
 	
-	protected LexicalClient client;
-	protected RequestType type;
-	
-	public LexicalRequest(LexicalClient client) {
-		this.client = client;
+	@Override
+	public String getName() {
+		return "idioms";
 	}
 	
-	public LexicalRequest setType(RequestType type) {
-		this.type = type;
-		return this;
-	}
-	
-	public final RequestType getType() {
-		return type;
+	@Override
+	public String getPath() {
+		return "/idioms";
 	}
 }

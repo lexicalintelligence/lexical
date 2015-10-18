@@ -17,18 +17,14 @@
 package com.lexicalintelligence.example;
 
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.extract.ExtractRequest;
-import com.lexicalintelligence.extract.ExtractResponse;
+import com.lexicalintelligence.action.extract.ExtractResponse;
 
 public class ExtractExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
 		
-		ExtractRequest extractRequest = new ExtractRequest("Lexical Intelligence is not a college fraternity.");
-		extractRequest.setDetectNegations(false);
+		ExtractResponse extractResponse = lexical.prepareExtract().setText("Brain").execute();
 		
-		ExtractResponse extractResponse = lexical.submit(extractRequest);
-		System.out.println(extractResponse.getEntries());
-		
+		extractResponse.getEntries().stream().forEach(System.out::println);
 	}
 }

@@ -14,37 +14,12 @@
  * limitations under the License.
  */
 
-package com.lexicalintelligence.request;
+package com.lexicalintelligence.admin.add;
 
-import com.lexicalintelligence.LexicalClient;
+import com.lexicalintelligence.LexicalResponse;
 
-public abstract class LexicalRequest {
-	public static enum RequestType {
-		Coordinations,
-		Negations,
-		Idioms,
-		Stopwords,
-		Spellings,
-		Entity;
-		
-		public String toString() {
-			return super.toString().toLowerCase();
-		}
-	}
-	
-	protected LexicalClient client;
-	protected RequestType type;
-	
-	public LexicalRequest(LexicalClient client) {
-		this.client = client;
-	}
-	
-	public LexicalRequest setType(RequestType type) {
-		this.type = type;
-		return this;
-	}
-	
-	public final RequestType getType() {
-		return type;
+public class AddResponse extends LexicalResponse {
+	public AddResponse(boolean success) {
+		super(success);
 	}
 }
