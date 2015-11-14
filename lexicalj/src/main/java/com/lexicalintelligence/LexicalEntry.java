@@ -126,7 +126,7 @@ public class LexicalEntry {
 	
 	@Override
 	public String toString() {
-		return "<name:" + name + ">";
+		return "{name:" + name + ", id:" + id + ", type:" + type + "}";
 	}
 	
 	@Override

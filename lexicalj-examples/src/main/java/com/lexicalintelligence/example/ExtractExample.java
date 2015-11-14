@@ -25,6 +25,23 @@ public class ExtractExample {
 		
 		ExtractResponse extractResponse = lexical.prepareExtract().setText("Brain").execute();
 		
+		//extractResponse.getEntries().stream().forEach(System.out::println);
+		
+		extractResponse = lexical.prepareExtract().setExtractKnown(false).setText("Brain").execute();
+		
+		//extractResponse.getEntries().stream().forEach(System.out::println);
+		
+		// Expand abbreviations
+		extractResponse = lexical.prepareExtract().setExtractKnown(false).setText("Brain power (BP). BP.").execute();
+		
+		// Expand coordinations
+		extractResponse = lexical.prepareExtract().setExtractKnown(false).setText("Brain and lung cancers (BLCs). BLC.").execute();
+		
+		// extractResponse.getEntries().stream().forEach(System.out::println);
+		
+		// Extract noun phrases
+		extractResponse = lexical.prepareExtract().setExtractKnown(true).setExtractUnknown(true).setText("Brain and lung cancers (BLCs). BLC.").execute();
+		
 		extractResponse.getEntries().stream().forEach(System.out::println);
 	}
 }

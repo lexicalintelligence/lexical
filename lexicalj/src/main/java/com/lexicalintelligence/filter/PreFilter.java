@@ -20,6 +20,8 @@ public enum PreFilter {
 	EXPAND_ABBREVIATIONS("expandAbbreviations"),
 	EXPAND_COORDINATIONS("expandCoordinations"),
 	CORRECT_SPELLING("checkSpelling"),
+	EXTRACT_ENTITIES("extractEntities"),
+	AUTO_RECOGNIZE("extractOov"),
 	DETECT_NEGATION("detectNegation");
 	
 	private String name;

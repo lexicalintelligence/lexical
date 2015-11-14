@@ -35,7 +35,6 @@ import org.codehaus.jackson.type.TypeReference;
 
 import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.LexicalEntry;
-import com.lexicalintelligence.filter.PostFilter;
 import com.lexicalintelligence.filter.PreFilter;
 
 public class ExtractRequest {
@@ -63,7 +62,7 @@ public class ExtractRequest {
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			Map<String, List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Map<String, List<LexicalEntry>>>() {
 			});
-			lexicalResponse.setEntries(result.get(PostFilter.EXTRACT_ENTITIES.toString()));
+			lexicalResponse.setEntries(result.get("entries"));
 		}
 		catch (Exception e) {
 			log.error(e);
@@ -88,23 +87,35 @@ public class ExtractRequest {
 		return this;
 	}
 	
+	public ExtractRequest setExtractKnown(boolean extractKnown) {
+		params.put(PreFilter.EXTRACT_ENTITIES.toString(), new BasicNameValuePair(PreFilter.EXTRACT_ENTITIES.toString(), Boolean.toString(extractKnown)));
+		return this;
+	}
+	
+	public ExtractRequest setExtractUnknown(boolean extractUnknown) {
+		params.put(PreFilter.AUTO_RECOGNIZE.toString(), new BasicNameValuePair(PreFilter.AUTO_RECOGNIZE.toString(), Boolean.toString(extractUnknown)));
+		return this;
+	}
+	
 	public ExtractRequest setDetectNegations(boolean detectNegations) {
-		params.put(PreFilter.DETECT_NEGATION.toString(), new BasicNameValuePair(PreFilter.DETECT_NEGATION.toString(), Boolean.FALSE.toString()));
+		params.put(PreFilter.DETECT_NEGATION.toString(), new BasicNameValuePair(PreFilter.DETECT_NEGATION.toString(), Boolean.toString(detectNegations)));
 		return this;
 	}
 	
 	public ExtractRequest setExpandAbbreviations(boolean expandAbbreviations) {
-		params.put(PreFilter.EXPAND_ABBREVIATIONS.toString(), new BasicNameValuePair(PreFilter.EXPAND_ABBREVIATIONS.toString(), Boolean.FALSE.toString()));
+		params.put(PreFilter.EXPAND_ABBREVIATIONS.toString(),
+						new BasicNameValuePair(PreFilter.EXPAND_ABBREVIATIONS.toString(), Boolean.toString(expandAbbreviations)));
 		return this;
 	}
 	
 	public ExtractRequest setExpandCoordinations(boolean expandCoordinations) {
-		params.put(PreFilter.EXPAND_COORDINATIONS.toString(), new BasicNameValuePair(PreFilter.EXPAND_COORDINATIONS.toString(), Boolean.FALSE.toString()));
+		params.put(PreFilter.EXPAND_COORDINATIONS.toString(),
+						new BasicNameValuePair(PreFilter.EXPAND_COORDINATIONS.toString(), Boolean.toString(expandCoordinations)));
 		return this;
 	}
 	
 	public ExtractRequest setCheckSpelling(boolean checkSpelling) {
-		params.put(PreFilter.CORRECT_SPELLING.toString(), new BasicNameValuePair(PreFilter.CORRECT_SPELLING.toString(), Boolean.FALSE.toString()));
+		params.put(PreFilter.CORRECT_SPELLING.toString(), new BasicNameValuePair(PreFilter.CORRECT_SPELLING.toString(), Boolean.toString(checkSpelling)));
 		return this;
 	}
 }
