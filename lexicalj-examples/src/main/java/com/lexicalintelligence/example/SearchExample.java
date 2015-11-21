@@ -17,28 +17,18 @@
 package com.lexicalintelligence.example;
 
 import com.lexicalintelligence.admin.LexicalAdminClient;
-import com.lexicalintelligence.admin.get.ListGetResponse;
-import com.lexicalintelligence.admin.get.MapGetResponse;
+import com.lexicalintelligence.search.SearchResponse;
 
-public class GetExample {
+public class SearchExample {
 	public static void main(String[] args) {
 		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:8080/lexicon/mesh");
 		
-		ListGetResponse lsr = lexical.searchStopwords().execute();
-		System.out.println(lsr.getItems());
+		String prefix = "healthy";
+		for (int i = 1; i <= prefix.length(); i++) {
+			SearchResponse sr = lexical.prepareSearch(prefix.substring(0, i)).execute();
+			sr.getItems().stream().limit(5).forEach(System.out::println);
+			System.out.println();
+		}
 		
-		MapGetResponse msr = lexical.searchSpellings().execute();
-		System.out.println(msr.getItems());
-		/*
-		ListSearchResponse gr = lexical.submit(getCoordinationsRequest());
-		System.out.println(gr.getItems());
-		
-		gr = lexical.submit(getIdiomsRequest());
-		System.out.println(gr.getItems());
-		gr = lexical.submit(getNegationsRequest());
-		System.out.println(gr.getItems());
-		
-		gr = lexical.submit(getStopwordsRequest());
-		System.out.println(gr.getItems());*/
 	}
 }

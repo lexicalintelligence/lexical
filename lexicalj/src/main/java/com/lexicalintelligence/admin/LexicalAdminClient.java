@@ -14,6 +14,9 @@ import com.lexicalintelligence.admin.add.AddNegationsRequest;
 import com.lexicalintelligence.admin.add.AddRequest;
 import com.lexicalintelligence.admin.add.AddSpellingsRequest;
 import com.lexicalintelligence.admin.add.AddStopwordsRequest;
+import com.lexicalintelligence.admin.get.GetRequest;
+import com.lexicalintelligence.admin.get.ListGetRequest;
+import com.lexicalintelligence.admin.get.MapGetRequest;
 import com.lexicalintelligence.admin.remove.RemoveCoordinationsRequest;
 import com.lexicalintelligence.admin.remove.RemoveEntryRequest;
 import com.lexicalintelligence.admin.remove.RemoveIdiomsRequest;
@@ -22,9 +25,7 @@ import com.lexicalintelligence.admin.remove.RemoveRequest;
 import com.lexicalintelligence.admin.remove.RemoveSpellingsRequest;
 import com.lexicalintelligence.admin.remove.RemoveStopwordsRequest;
 import com.lexicalintelligence.admin.save.SaveRequest;
-import com.lexicalintelligence.admin.search.ListSearchRequest;
-import com.lexicalintelligence.admin.search.MapSearchRequest;
-import com.lexicalintelligence.admin.search.SearchRequest;
+import com.lexicalintelligence.search.SearchRequest;
 
 public class LexicalAdminClient extends LexicalClient {
 	public LexicalAdminClient(String url) {
@@ -133,8 +134,8 @@ public class LexicalAdminClient extends LexicalClient {
 		return new RemoveEntryRequest(this).item(entry);
 	}
 	
-	public SearchRequest searchSpellings() {
-		return new MapSearchRequest(this) {
+	public GetRequest searchSpellings() {
+		return new MapGetRequest(this) {
 			
 			@Override
 			public String getPath() {
@@ -143,12 +144,16 @@ public class LexicalAdminClient extends LexicalClient {
 		};
 	}
 	
-	public SearchRequest searchStopwords() {
-		return new ListSearchRequest(this) {
+	public GetRequest searchStopwords() {
+		return new ListGetRequest(this) {
 			@Override
 			public String getPath() {
 				return "/stopwords";
 			}
 		};
+	}
+	
+	public SearchRequest prepareSearch(String query) {
+		return new SearchRequest(this).setQuery(query);
 	}
 }
