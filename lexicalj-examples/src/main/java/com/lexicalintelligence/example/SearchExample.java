@@ -25,8 +25,8 @@ public class SearchExample {
 		
 		String prefix = "healthy";
 		for (int i = 1; i <= prefix.length(); i++) {
-			SearchResponse sr = lexical.prepareSearch(prefix.substring(0, i)).execute();
-			sr.getItems().stream().limit(5).forEach(System.out::println);
+			SearchResponse sr = lexical.prepareSearch("hea").execute();
+			sr.getItems().stream().forEach(System.out::println);
 			System.out.println();
 		}
 		

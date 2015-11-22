@@ -24,10 +24,10 @@ public class GetExample {
 	public static void main(String[] args) {
 		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:8080/lexicon/mesh");
 		
-		ListGetResponse lsr = lexical.searchStopwords().execute();
+		ListGetResponse lsr = lexical.getStopwords().execute();
 		System.out.println(lsr.getItems());
 		
-		MapGetResponse msr = lexical.searchSpellings().execute();
+		MapGetResponse msr = lexical.getSpellings().execute();
 		System.out.println(msr.getItems());
 		/*
 		ListSearchResponse gr = lexical.submit(getCoordinationsRequest());

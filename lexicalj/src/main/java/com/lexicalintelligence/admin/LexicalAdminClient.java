@@ -134,7 +134,7 @@ public class LexicalAdminClient extends LexicalClient {
 		return new RemoveEntryRequest(this).item(entry);
 	}
 	
-	public GetRequest searchSpellings() {
+	public GetRequest getSpellings() {
 		return new MapGetRequest(this) {
 			
 			@Override
@@ -144,11 +144,38 @@ public class LexicalAdminClient extends LexicalClient {
 		};
 	}
 	
-	public GetRequest searchStopwords() {
+	public GetRequest getStopwords() {
 		return new ListGetRequest(this) {
 			@Override
 			public String getPath() {
 				return "/stopwords";
+			}
+		};
+	}
+	
+	public GetRequest getIdioms() {
+		return new ListGetRequest(this) {
+			@Override
+			public String getPath() {
+				return "/idioms";
+			}
+		};
+	}
+	
+	public GetRequest getNegations() {
+		return new ListGetRequest(this) {
+			@Override
+			public String getPath() {
+				return "/negations";
+			}
+		};
+	}
+	
+	public GetRequest getCoordinations() {
+		return new ListGetRequest(this) {
+			@Override
+			public String getPath() {
+				return "/coordinations";
 			}
 		};
 	}
