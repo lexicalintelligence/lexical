@@ -22,10 +22,10 @@ import com.lexicalintelligence.search.SearchResponse;
 public class SearchExample {
 	public static void main(String[] args) {
 		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:8080/lexicon/mesh");
-		
-		String prefix = "healthy";
+
+		String prefix = "brain c";
 		for (int i = 1; i <= prefix.length(); i++) {
-			SearchResponse sr = lexical.prepareSearch("hea").execute();
+			SearchResponse sr = lexical.prepareSearch(prefix).execute();
 			sr.getItems().stream().forEach(System.out::println);
 			System.out.println();
 		}

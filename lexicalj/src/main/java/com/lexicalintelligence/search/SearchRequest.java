@@ -18,6 +18,7 @@ package com.lexicalintelligence.search;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class SearchRequest {
 		Reader reader = null;
 		SearchResponse searchResponse = new SearchResponse(true);
 		try {
-			HttpResponse response = client.getHttpClient().execute(new HttpGet(client.getUrl() + PATH + "?prefix=" + query));
+			HttpResponse response = client.getHttpClient().execute(new HttpGet(client.getUrl() + PATH + "?prefix=" + URLEncoder.encode(query, "UTF-8")));
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			List<String> items = client.getObjectMapper().readValue(reader, new TypeReference<List<String>>() {
 			});
