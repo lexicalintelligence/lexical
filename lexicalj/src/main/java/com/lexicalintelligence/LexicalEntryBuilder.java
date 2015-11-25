@@ -20,95 +20,99 @@ import java.util.List;
 
 public class LexicalEntryBuilder {
 	private LexicalEntry _entry;
-	
+
 	private LexicalEntryBuilder() {
 		_entry = new LexicalEntry();
 	}
-
+	
 	public static LexicalEntryBuilder start() {
 		return new LexicalEntryBuilder();
 	}
-
+	
 	public static LexicalEntryBuilder start(String name) {
 		return start().name(name);
 	}
-	
+
 	public static LexicalEntryBuilder start(String name, String synonym) {
 		return start(name).synonym(synonym);
 	}
-	
+
 	public LexicalEntryBuilder name(String name) {
 		_entry.setName(name);
 		return this;
 	}
-	
+
 	public LexicalEntryBuilder synonym(String synonym) {
 		_entry.setSynonym(synonym);
 		return this;
 	}
-
+	
 	public LexicalEntryBuilder id(int id) {
 		_entry.setId(id);
 		return this;
 	}
-
+	
 	public LexicalEntryBuilder type(List<String> type) {
 		_entry.setType(type);
 		return this;
 	}
-
+	
 	public LexicalEntryBuilder start(int start) {
 		_entry.setStart(start);
 		return this;
 	}
-	
+
 	public LexicalEntryBuilder end(int end) {
 		_entry.setEnd(end);
 		return this;
 	}
-	
+
 	public LexicalEntryBuilder order() {
 		return order(true);
 	}
-	
+
 	public LexicalEntryBuilder order(boolean order) {
 		_entry.setOrderSensitive(order);
 		return this;
 	}
-	
+
 	public LexicalEntryBuilder fold() {
 		return fold(true);
 	}
-	
+
 	public LexicalEntryBuilder fold(boolean fold) {
 		_entry.setCaseSensitive(!fold);
 		return this;
 	}
-	
+
 	public LexicalEntryBuilder stopwords() {
 		return stopwords(true);
 	}
-	
+
 	public LexicalEntryBuilder stopwords(boolean stopwords) {
 		_entry.setMatchStopwords(stopwords);
 		return this;
 	}
-
+	
 	public LexicalEntryBuilder punctuation() {
 		return punctuation(true);
 	}
-	
+
 	public LexicalEntryBuilder punctuation(boolean punctuation) {
 		_entry.setMatchPunctuation(punctuation);
 		return this;
 	}
-
+	
 	public LexicalEntryBuilder stem() {
 		return stem(true);
 	}
-	
+
 	public LexicalEntryBuilder stem(boolean stem) {
 		_entry.setStemmed(stem);
 		return this;
+	}
+
+	public LexicalEntry get() {
+		return _entry;
 	}
 }
