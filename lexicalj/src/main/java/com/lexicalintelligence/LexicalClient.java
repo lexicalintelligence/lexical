@@ -23,6 +23,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import com.lexicalintelligence.action.extract.BatchRequest;
 import com.lexicalintelligence.action.extract.ExtractRequest;
 
 public class LexicalClient {
@@ -36,27 +37,31 @@ public class LexicalClient {
 	
 	private static CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(cm).build();
 	private static ObjectMapper mapper = new ObjectMapper();
-
+	
 	private String url;
-
+	
 	public LexicalClient(String url) {
 		System.setProperty("jsse.enableSNIExtension", "false");
 		this.url = url;
 	}
-
+	
 	public ExtractRequest prepareExtract() {
 		return new ExtractRequest(this);
 	}
-
+	
 	public String getUrl() {
 		return url;
 	}
-
+	
 	public CloseableHttpClient getHttpClient() {
 		return httpClient;
 	}
-
+	
 	public ObjectMapper getObjectMapper() {
 		return mapper;
+	}
+	
+	public BatchRequest prepareBatch() {
+		return new BatchRequest(this);
 	}
 }

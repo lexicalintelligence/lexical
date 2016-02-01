@@ -21,11 +21,15 @@ import com.lexicalintelligence.action.extract.ExtractResponse;
 
 public class ExtractExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:8080/lexicon/mesh");
+		LexicalClient lexical = new LexicalClient("http://localhost:9898/rcdc");
 		
 		ExtractResponse extractResponse = lexical.prepareExtract().setText("Brain").execute();
 		
-		//extractResponse.getEntries().stream().forEach(System.out::println);
+		// Extract noun phrases
+		extractResponse = lexical.prepareExtract().setExtractKnown(true).setExpandCoordinations(true).setExtractUnknown(false)
+						.setText("will lead for the brain").execute();
+		
+		extractResponse.getEntries().stream().forEach(System.out::println);
 		
 		extractResponse = lexical.prepareExtract().setExtractKnown(false).setText("Brain").execute();
 		
@@ -39,9 +43,6 @@ public class ExtractExample {
 		
 		// extractResponse.getEntries().stream().forEach(System.out::println);
 		
-		// Extract noun phrases
-		extractResponse = lexical.prepareExtract().setExtractKnown(true).setExtractUnknown(true).setText("Brain and lung cancers (BLCs). BLC.").execute();
-		
-		extractResponse.getEntries().stream().forEach(System.out::println);
+		//extractResponse.getEntries().stream().forEach(System.out::println);
 	}
 }
