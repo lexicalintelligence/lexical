@@ -20,11 +20,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -43,31 +44,42 @@ public class BatchRequest {
 	private static String PATH = "/process";
 	
 	private LexicalClient client;
-	private Map<String, Object> params;
+	private Map<String, Object> flags;
+	private List<Map<String, Object>> docs;
 	
 	public BatchRequest(LexicalClient client) {
 		if (client == null) {
 			throw new RuntimeException();
 		}
 		this.client = client;
-		params = new HashMap<>();
+		flags = new HashMap<>();
+		docs = new ArrayList<>();
 	}
 	
+	public BatchRequest add(Map<String, Object> doc) {
+		docs.add(doc);
+		return this;
+	}
+
 	public ExtractResponse execute() {
 		ExtractResponse lexicalResponse = new ExtractResponse();
 		HttpPost post = new HttpPost(client.getUrl() + PATH);
 		Reader reader = null;
 		try {
-			StringEntity postingString = new StringEntity(""); // params.toString());
+			Map<String, Object> m = new HashMap<>();
+			m.put("flags", flags);
+			m.put("docs", docs);
+			
+			StringEntity postingString = new StringEntity(gson.toJson(m));
+			System.out.println(getClass() + "\t" + Collections.singletonList(flags.toString()).toString());
 			post.setEntity(postingString);
 			post.setHeader("Content-type", "application/json");
 			post.setHeader("Accept", "application/json");
 			post.setHeader("X-Stream", "true");
-			System.out.println(gson.toJson(params));
 			//post.setEntity(new UrlEncodedFormEntity(params.values()));
 			HttpResponse response = client.getHttpClient().execute(post);
 			
-			System.out.println(IOUtils.toString(response.getEntity().getContent()));
+			//System.out.println(getClass() + "\t" + IOUtils.toString(response.getEntity().getContent()));
 			
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			Map<String, List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Map<String, List<LexicalEntry>>>() {
@@ -90,22 +102,13 @@ public class BatchRequest {
 		return lexicalResponse;
 	}
 	
-	public BatchRequest setTitle(String title) {
-		if (title != null) {
-			params.put("title", title);
-		}
+	public BatchRequest setExpandAbbreviations(boolean expandAbbreviations) {
+		flags.put("expandAbbreviations", expandAbbreviations);
 		return this;
 	}
 	
-	public BatchRequest setText(String text) {
-		if (text != null) {
-			params.put("text", text);
-		}
-		return this;
-	}
-	
-	public BatchRequest setId(int id) {
-		params.put("id", id);
+	public BatchRequest setExpandCoordinations(boolean expandCoordinations) {
+		flags.put("expandCoordinations", expandCoordinations);
 		return this;
 	}
 	

@@ -16,15 +16,31 @@
 
 package com.lexicalintelligence.example;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.lexicalintelligence.LexicalClient;
+import com.lexicalintelligence.action.extract.BatchRequest;
 import com.lexicalintelligence.action.extract.ExtractResponse;
 
 public class BatchExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:9898/rcdc");
+		LexicalClient lexical = new LexicalClient("http://localhost:9898/RCDCv2014.10");
 		
-		ExtractResponse extractResponse = lexical.prepareBatch().setId(1).setText("Brain").execute();
+		BatchRequest request = lexical.prepareBatch().setExpandAbbreviations(true);
+
+		Map<String, Object> doc = new HashMap<>();
+		doc.put("id", 1);
+		doc.put("text", "brain, kidney and lung cancer");
+		request.add(doc);
+
+		doc = new HashMap<>();
+		doc.put("id", 2);
+		doc.put("text", "heart and lungs");
+		request.add(doc);
+
+		ExtractResponse response = request.execute();
 		
-		extractResponse.getEntries().stream().forEach(System.out::println);
+		//extractResponse.getEntries().stream().forEach(System.out::println);
 	}
 }
