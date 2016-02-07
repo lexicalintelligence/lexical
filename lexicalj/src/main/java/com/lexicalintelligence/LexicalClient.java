@@ -23,7 +23,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.codehaus.jackson.map.ObjectMapper;
 
-import com.lexicalintelligence.action.extract.BatchRequest;
+import com.lexicalintelligence.action.extract.BatchExtractRequest;
 import com.lexicalintelligence.action.extract.ExtractRequest;
 
 public class LexicalClient {
@@ -61,7 +61,7 @@ public class LexicalClient {
 		return mapper;
 	}
 	
-	public BatchRequest prepareBatch() {
-		return new BatchRequest(this);
+	public BatchExtractRequest prepareBatch() {
+		return new BatchExtractRequest(this);
 	}
 }

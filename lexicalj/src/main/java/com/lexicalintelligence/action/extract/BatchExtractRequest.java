@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -37,42 +37,40 @@ import com.google.gson.GsonBuilder;
 import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.LexicalEntry;
 
-public class BatchRequest {
-	private Log log = LogFactory.getLog(BatchRequest.class);
+public class BatchExtractRequest {
+	private Log log = LogFactory.getLog(BatchExtractRequest.class);
 	private static Gson gson = new GsonBuilder().create();
 	private static String PATH = "/process";
 	
 	private LexicalClient client;
-	private Map<String, Object> params;
+	private List<Map<String, String>> params;
 	
-	public BatchRequest(LexicalClient client) {
+	public BatchExtractRequest(LexicalClient client) {
 		if (client == null) {
 			throw new RuntimeException();
 		}
 		this.client = client;
-		params = new HashMap<>();
+		params = new ArrayList<>();
 	}
 	
-	public ExtractResponse execute() {
-		ExtractResponse lexicalResponse = new ExtractResponse();
+	public BatchExtractResponse execute() {
+		BatchExtractResponse lexicalResponse = new BatchExtractResponse();
 		HttpPost post = new HttpPost(client.getUrl() + PATH);
 		Reader reader = null;
 		try {
-			StringEntity postingString = new StringEntity(""); // params.toString());
+			StringEntity postingString = new StringEntity(gson.toJson(params));
 			post.setEntity(postingString);
 			post.setHeader("Content-type", "application/json");
-			post.setHeader("Accept", "application/json");
-			post.setHeader("X-Stream", "true");
-			System.out.println(gson.toJson(params));
+			//post.setHeader("Accept", "application/json");
+			//post.setHeader("X-Stream", "true");
+			// System.out.println(gson.toJson(params));
 			//post.setEntity(new UrlEncodedFormEntity(params.values()));
 			HttpResponse response = client.getHttpClient().execute(post);
 			
-			System.out.println(IOUtils.toString(response.getEntity().getContent()));
-			
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
-			Map<String, List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Map<String, List<LexicalEntry>>>() {
+			Collection<List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Collection<List<LexicalEntry>>>() {
 			});
-			lexicalResponse.setEntries(result.get("entries"));
+			lexicalResponse.setEntries(result);
 		}
 		catch (Exception e) {
 			log.error(e);
@@ -90,23 +88,8 @@ public class BatchRequest {
 		return lexicalResponse;
 	}
 	
-	public BatchRequest setTitle(String title) {
-		if (title != null) {
-			params.put("title", title);
-		}
+	public BatchExtractRequest add(Map<String, String> doc) {
+		params.add(doc);
 		return this;
 	}
-	
-	public BatchRequest setText(String text) {
-		if (text != null) {
-			params.put("text", text);
-		}
-		return this;
-	}
-	
-	public BatchRequest setId(int id) {
-		params.put("id", id);
-		return this;
-	}
-	
 }
