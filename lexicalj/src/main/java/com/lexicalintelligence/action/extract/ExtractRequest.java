@@ -20,9 +20,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -35,21 +36,21 @@ import org.codehaus.jackson.type.TypeReference;
 
 import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.LexicalEntry;
-import com.lexicalintelligence.filter.PreFilter;
+import com.lexicalintelligence.LexicalType;
 
 public class ExtractRequest {
 	private Log log = LogFactory.getLog(ExtractRequest.class);
 	private static String PATH = "/extract";
 	
 	private LexicalClient client;
-	private Map<String, NameValuePair> params;
+	private NameValuePair params;
+	private List<LexicalType> lexicalTypes = Collections.emptyList();
 	
 	public ExtractRequest(LexicalClient client) {
 		if (client == null) {
 			throw new RuntimeException();
 		}
 		this.client = client;
-		params = new HashMap<>();
 	}
 	
 	public ExtractResponse execute() {
@@ -57,12 +58,24 @@ public class ExtractRequest {
 		HttpPost post = new HttpPost(client.getUrl() + PATH);
 		Reader reader = null;
 		try {
-			post.setEntity(new UrlEncodedFormEntity(params.values()));
+			post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(params), StandardCharsets.UTF_8));
 			HttpResponse response = client.getHttpClient().execute(post);
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			Map<String, List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Map<String, List<LexicalEntry>>>() {
 			});
-			lexicalResponse.setEntries(result.get("entries"));
+			
+			lexicalResponse.setEntries(result.get("entries").stream().filter(x -> {
+				for (String type : x.getType()) {
+					for (LexicalType lexicalType : lexicalTypes) {
+						if (type.equals(lexicalType.toString())) {
+							return true;
+						}
+					}
+				}
+				return false;
+			}).collect(Collectors.toList()));
+			
+			//lexicalResponse.setEntries(result.get("entries"));
 		}
 		catch (Exception e) {
 			log.error(e);
@@ -82,40 +95,16 @@ public class ExtractRequest {
 	
 	public ExtractRequest setText(String text) {
 		if (text != null) {
-			params.put("text", new BasicNameValuePair("text", text));
+			params = new BasicNameValuePair("text", text);
 		}
 		return this;
 	}
 	
-	public ExtractRequest setExtractKnown(boolean extractKnown) {
-		params.put(PreFilter.EXTRACT_ENTITIES.toString(), new BasicNameValuePair(PreFilter.EXTRACT_ENTITIES.toString(), Boolean.toString(extractKnown)));
+	public ExtractRequest projection(List<LexicalType> lexicalTypes) {
+		if (lexicalTypes != null && !lexicalTypes.isEmpty()) {
+			this.lexicalTypes = lexicalTypes;
+		}
 		return this;
 	}
 	
-	public ExtractRequest setExtractUnknown(boolean extractUnknown) {
-		params.put(PreFilter.AUTO_RECOGNIZE.toString(), new BasicNameValuePair(PreFilter.AUTO_RECOGNIZE.toString(), Boolean.toString(extractUnknown)));
-		return this;
-	}
-	
-	public ExtractRequest setDetectNegations(boolean detectNegations) {
-		params.put(PreFilter.DETECT_NEGATION.toString(), new BasicNameValuePair(PreFilter.DETECT_NEGATION.toString(), Boolean.toString(detectNegations)));
-		return this;
-	}
-	
-	public ExtractRequest setExpandAbbreviations(boolean expandAbbreviations) {
-		params.put(PreFilter.EXPAND_ABBREVIATIONS.toString(),
-						new BasicNameValuePair(PreFilter.EXPAND_ABBREVIATIONS.toString(), Boolean.toString(expandAbbreviations)));
-		return this;
-	}
-	
-	public ExtractRequest setExpandCoordinations(boolean expandCoordinations) {
-		params.put(PreFilter.EXPAND_COORDINATIONS.toString(),
-						new BasicNameValuePair(PreFilter.EXPAND_COORDINATIONS.toString(), Boolean.toString(expandCoordinations)));
-		return this;
-	}
-	
-	public ExtractRequest setCheckSpelling(boolean checkSpelling) {
-		params.put(PreFilter.CORRECT_SPELLING.toString(), new BasicNameValuePair(PreFilter.CORRECT_SPELLING.toString(), Boolean.toString(checkSpelling)));
-		return this;
-	}
 }
