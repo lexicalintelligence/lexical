@@ -20,27 +20,28 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.lexicalintelligence.LexicalClient;
-import com.lexicalintelligence.action.extract.BatchRequest;
-import com.lexicalintelligence.action.extract.ExtractResponse;
+import com.lexicalintelligence.action.extract.BatchExtractRequest;
+import com.lexicalintelligence.action.extract.BatchExtractResponse;
 
 public class BatchExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:9898/RCDCv2014.10");
-		
-		BatchRequest request = lexical.prepareBatch().setExpandAbbreviations(true);
+		LexicalClient lexical = new LexicalClient("http://localhost:9898/rcdc");
+		Map<String, String> doc = new HashMap<>();
+		doc.put("id", "1");
+		doc.put("title", "Effect of Carbon");
+		doc.put("text", "Carbon is known to have effects.");
 
-		Map<String, Object> doc = new HashMap<>();
-		doc.put("id", 1);
-		doc.put("text", "brain, kidney and lung cancer");
+		BatchExtractRequest request = lexical.prepareBatch();
 		request.add(doc);
 
 		doc = new HashMap<>();
-		doc.put("id", 2);
-		doc.put("text", "heart and lungs");
+		doc.put("id", "2");
+		doc.put("title", "Effect of Graphs");
+		doc.put("text", "Grapes are known to have effects.");
+
 		request.add(doc);
 
-		ExtractResponse response = request.execute();
-		
-		//extractResponse.getEntries().stream().forEach(System.out::println);
+		BatchExtractResponse response = request.execute();
+		response.getEntries().stream().forEach(System.out::println);
 	}
 }

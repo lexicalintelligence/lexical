@@ -16,33 +16,19 @@
 
 package com.lexicalintelligence.example;
 
+import static com.lexicalintelligence.LexicalProjections.include;
+import static com.lexicalintelligence.LexicalType.STOPWORD;
+import static com.lexicalintelligence.LexicalType.WORD;
+
 import com.lexicalintelligence.LexicalClient;
 import com.lexicalintelligence.action.extract.ExtractResponse;
 
 public class ExtractExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:9898/rcdc");
+		LexicalClient lexical = new LexicalClient("http://localhost:9898/ner");
 		
-		ExtractResponse extractResponse = lexical.prepareExtract().setText("Brain").execute();
-		
-		// Extract noun phrases
-		extractResponse = lexical.prepareExtract().setExtractKnown(true).setExpandCoordinations(true).setExtractUnknown(false)
-						.setText("will lead for the brain").execute();
+		ExtractResponse extractResponse = lexical.prepareExtract().setText("This is your brain on the steroids.").projection(include(WORD, STOPWORD)).execute();
 		
 		extractResponse.getEntries().stream().forEach(System.out::println);
-		
-		extractResponse = lexical.prepareExtract().setExtractKnown(false).setText("Brain").execute();
-		
-		//extractResponse.getEntries().stream().forEach(System.out::println);
-		
-		// Expand abbreviations
-		extractResponse = lexical.prepareExtract().setExtractKnown(false).setText("Brain power (BP). BP.").execute();
-		
-		// Expand coordinations
-		extractResponse = lexical.prepareExtract().setExtractKnown(false).setText("Brain and lung cancers (BLCs). BLC.").execute();
-		
-		// extractResponse.getEntries().stream().forEach(System.out::println);
-		
-		//extractResponse.getEntries().stream().forEach(System.out::println);
 	}
 }
