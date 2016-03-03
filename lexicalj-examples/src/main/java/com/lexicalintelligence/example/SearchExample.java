@@ -21,14 +21,14 @@ import com.lexicalintelligence.search.SearchResponse;
 
 public class SearchExample {
 	public static void main(String[] args) {
-		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:8080/lexicon/mesh");
-
+		LexicalAdminClient lexical = new LexicalAdminClient("http://localhost:9898/mesh");
+		
 		String prefix = "brain c";
 		for (int i = 1; i <= prefix.length(); i++) {
-			SearchResponse sr = lexical.prepareSearch(prefix).execute();
+			SearchResponse sr = lexical.prepareSearch(prefix.substring(0, i)).execute();
 			sr.getItems().stream().forEach(System.out::println);
 			System.out.println();
 		}
-		
+
 	}
 }

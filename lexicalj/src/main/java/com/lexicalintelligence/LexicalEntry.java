@@ -28,7 +28,7 @@ public class LexicalEntry {
 	private int start;
 	private int end;
 	private List<String> type = Collections.emptyList();
-	
+
 	// Indexing properties
 	@JsonIgnore
 	private boolean orderSensitive = false;
@@ -40,120 +40,116 @@ public class LexicalEntry {
 	private boolean matchPunctuation = false;
 	@JsonIgnore
 	private boolean stemmed = false;
-	
+
 	public LexicalEntry() {
-		
+
 	}
-	
+
 	public List<String> getType() {
 		return type;
 	}
-	
+
 	public void setType(List<String> type) {
 		this.type = type;
 	}
-	
+
 	public boolean isOrderSensitive() {
 		return orderSensitive;
 	}
-	
+
 	public void setOrderSensitive(boolean orderSensitive) {
 		this.orderSensitive = orderSensitive;
 	}
-	
+
 	public boolean isCaseSensitive() {
 		return caseSensitive;
 	}
-	
+
 	public void setCaseSensitive(boolean caseSensitive) {
 		this.caseSensitive = caseSensitive;
 	}
-	
+
 	public boolean isMatchStopwords() {
 		return matchStopwords;
 	}
-	
+
 	public void setMatchStopwords(boolean matchStopwords) {
 		this.matchStopwords = matchStopwords;
 	}
-	
+
 	public boolean isMatchPunctuation() {
 		return matchPunctuation;
 	}
-	
+
 	public void setMatchPunctuation(boolean matchPunctuation) {
 		this.matchPunctuation = matchPunctuation;
 	}
-	
+
 	public boolean isStemmed() {
 		return stemmed;
 	}
-	
+
 	public void setStemmed(boolean stemmed) {
 		this.stemmed = stemmed;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
-	
+
 	public int getId() {
 		return id;
 	}
-	
+
 	public int getStart() {
 		return start;
 	}
-	
+
 	public int getEnd() {
 		return end;
-	}
-	
-	public List<String> getTypes() {
-		return type;
 	}
 	
 	public String getSynonym() {
 		return synonym;
 	}
-	
+
 	public LexicalEntry setSynonym(String synonym) {
 		if (synonym != null) {
 			this.synonym = synonym;
 		}
 		return this;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "{name:" + name + ", id:" + id + ", type:" + type + ", start:" + start + ", end:" + end + "}";
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		return ((LexicalEntry) o).id == id;
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return Integer.hashCode(id);
 	}
-	
+
 	public LexicalEntry setName(String name) {
 		if (name != null) {
 			this.name = name;
 		}
 		return this;
 	}
-	
+
 	public void setId(int id) {
 		this.id = id;
 	}
-	
+
 	public void setStart(int start) {
 		this.start = start;
 	}
-	
+
 	public void setEnd(int end) {
 		this.end = end;
 	}

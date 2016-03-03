@@ -21,8 +21,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
@@ -44,7 +46,8 @@ public class ExtractRequest {
 	
 	private LexicalClient client;
 	private NameValuePair params;
-	private List<LexicalType> lexicalTypes = Collections.emptyList();
+	private boolean include = false;
+	private Set<String> projection;
 	
 	public ExtractRequest(LexicalClient client) {
 		if (client == null) {
@@ -64,18 +67,30 @@ public class ExtractRequest {
 			Map<String, List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Map<String, List<LexicalEntry>>>() {
 			});
 			
-			lexicalResponse.setEntries(result.get("entries").stream().filter(x -> {
-				for (String type : x.getType()) {
-					for (LexicalType lexicalType : lexicalTypes) {
-						if (type.equals(lexicalType.toString())) {
+			if (projection == null) {
+				lexicalResponse.setEntries(result.get("entries").stream().collect(Collectors.toList()));
+			}
+			else {
+				lexicalResponse.setEntries(result.get("entries").stream().filter(x -> {
+					for (String type : x.getType()) {
+						boolean contains = projection.contains(type);
+						if (include) {
+							if (!contains) {
+								return false;
+							}
 							return true;
 						}
+						else {
+							if (contains) {
+								return false;
+							}
+							return true;
+						}
+
 					}
-				}
-				return false;
-			}).collect(Collectors.toList()));
-			
-			//lexicalResponse.setEntries(result.get("entries"));
+					return false;
+				}).collect(Collectors.toList()));
+			}
 		}
 		catch (Exception e) {
 			log.error(e);
@@ -99,12 +114,22 @@ public class ExtractRequest {
 		}
 		return this;
 	}
-	
-	public ExtractRequest projection(List<LexicalType> lexicalTypes) {
-		if (lexicalTypes != null && !lexicalTypes.isEmpty()) {
-			this.lexicalTypes = lexicalTypes;
+
+	public ExtractRequest include(LexicalType... lexicalTypes) {
+		projection = new HashSet<String>(lexicalTypes.length);
+		include = true;
+		for (LexicalType type : lexicalTypes) {
+			projection.add(type.toString());
 		}
 		return this;
 	}
 	
+	public ExtractRequest exclude(LexicalType... lexicalTypes) {
+		projection = new HashSet<String>(lexicalTypes.length);
+		include = false;
+		for (LexicalType type : lexicalTypes) {
+			projection.add(type.toString());
+		}
+		return this;
+	}
 }
