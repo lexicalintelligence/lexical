@@ -72,24 +72,33 @@ public class ExtractRequest {
 			}
 			else {
 				lexicalResponse.setEntries(result.get("entries").stream().filter(x -> {
-					for (String type : x.getType()) {
-						boolean contains = projection.contains(type);
-						if (include) {
-							if (!contains) {
-								return false;
-							}
-							return true;
-						}
-						else {
-							if (contains) {
-								return false;
-							}
-							return true;
-						}
-
-					}
-					return false;
-				}).collect(Collectors.toList()));
+					//System.out.println(getClass() + "\t" + x);
+								for (String type : x.getType()) {
+									boolean contains = projection.contains(type);
+									
+									if (contains) {
+										//System.out.println("\tcontains= " + contains + "\t" + type + "\t" + x + "\tinclude = " + include);
+										return include;
+									}
+								}
+								return !include;
+								/*
+								if (include) {
+									//System.out.println(getClass() + "\t" + x + "\tinclude\t" + type + "\tcontains\t" + contains);
+										if (!contains) {
+											return false;
+										}
+										return true;
+									}
+									else {
+										if (contains) {
+											return false;
+										}
+										return true;
+									}
+								}
+								return false;*/
+							}).collect(Collectors.toList()));
 			}
 		}
 		catch (Exception e) {
@@ -114,7 +123,7 @@ public class ExtractRequest {
 		}
 		return this;
 	}
-
+	
 	public ExtractRequest include(LexicalType... lexicalTypes) {
 		projection = new HashSet<String>(lexicalTypes.length);
 		include = true;

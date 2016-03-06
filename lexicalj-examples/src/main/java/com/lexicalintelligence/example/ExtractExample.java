@@ -16,8 +16,7 @@
 
 package com.lexicalintelligence.example;
 
-import static com.lexicalintelligence.LexicalType.PUNCTUATION;
-import static com.lexicalintelligence.LexicalType.STOPWORD;
+import static com.lexicalintelligence.LexicalType.VERB;
 import static com.lexicalintelligence.LexicalType.WORD;
 
 import com.lexicalintelligence.LexicalClient;
@@ -27,15 +26,11 @@ public class ExtractExample {
 	public static void main(String[] args) {
 		LexicalClient lexical = new LexicalClient("http://localhost:9898/ner");
 		
-		ExtractResponse extractResponse = lexical.prepareExtract().setText("This is your brain on the steroids.").include(WORD, STOPWORD).execute();
+		ExtractResponse extractResponse = lexical
+						.prepareExtract()
+						.setText("In Drosophila, a single GSL biosynthetic pathway is helping the activities of the Egghead and Brainiac glycosyltransferases.")
+						.include(WORD, VERB).execute();
 		extractResponse.getEntries().stream().forEach(System.out::println);
-
-		System.out.println("-------");
-		extractResponse = lexical.prepareExtract().setText("This is your brain on the steroids.").execute();
-		extractResponse.getEntries().stream().forEach(System.out::println);
-
-		System.out.println("-------");
-		extractResponse = lexical.prepareExtract().setText("This is your brain on the steroids.").exclude(PUNCTUATION, STOPWORD).execute();
-		extractResponse.getEntries().stream().forEach(System.out::println);
+		
 	}
 }
