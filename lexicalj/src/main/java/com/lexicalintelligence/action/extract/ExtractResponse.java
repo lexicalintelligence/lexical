@@ -48,4 +48,10 @@ public class ExtractResponse extends LexicalResponse {
 	public String getId() {
 		return id;
 	}
+
+	@Override
+	public String toString() {
+		return getClass().getSimpleName() + " [entries=" + entries + ", id=" + id + "]";
+	}
+
 }

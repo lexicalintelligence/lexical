@@ -21,11 +21,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -36,16 +36,17 @@ import org.codehaus.jackson.type.TypeReference;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.lexicalintelligence.LexicalClient;
+import com.lexicalintelligence.LexicalDocument;
 import com.lexicalintelligence.LexicalEntry;
 
 public class BatchExtractRequest {
 	private Log log = LogFactory.getLog(BatchExtractRequest.class);
 	private static Gson gson = new GsonBuilder().create();
-	private static String PATH = "batchExtract";
-	
+	private static String PATH = "/extract/batch";
+
 	private LexicalClient client;
-	private List<Map<String, String>> params;
-	
+	private List<LexicalDocument> params;
+
 	public BatchExtractRequest(LexicalClient client) {
 		if (client == null) {
 			throw new RuntimeException();
@@ -53,9 +54,9 @@ public class BatchExtractRequest {
 		this.client = client;
 		params = new ArrayList<>();
 	}
-	
-	public BatchExtractResponse execute() {
-		BatchExtractResponse lexicalResponse = new BatchExtractResponse();
+
+	@SuppressWarnings("unchecked")
+	public List<ExtractResponse> execute() {
 		HttpPost post = new HttpPost(client.getUrl() + PATH);
 		Reader reader = null;
 		try {
@@ -64,15 +65,22 @@ public class BatchExtractRequest {
 			post.setHeader("Content-type", "application/json");
 			//post.setHeader("Accept", "application/json");
 			//post.setHeader("X-Stream", "true");
-			System.out.println(gson.toJson(params));
+			//System.out.println(gson.toJson(params));
 			//post.setEntity(new UrlEncodedFormEntity(params.values()));
 			HttpResponse response = client.getHttpClient().execute(post);
-			System.out.println(">> " + IOUtils.toString(response.getEntity().getContent()));
-			
+			//System.out.println(">> " + IOUtils.toString(response.getEntity().getContent()));
+
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
-			Collection<List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Collection<List<LexicalEntry>>>() {
+
+			List<Map<String, Object>> result = client.getObjectMapper().readValue(reader, new TypeReference<List<Map<String, Object>>>() {
 			});
-			lexicalResponse.setEntries(result);
+			
+			return result.stream().map(r -> {
+				ExtractResponse extractResponse = new ExtractResponse();
+				extractResponse.setId((String) r.get("id"));
+				extractResponse.setEntries((Map<String, List<LexicalEntry>>) r.get("entries"));
+				return extractResponse;
+			}).collect(Collectors.toList());
 		}
 		catch (Exception e) {
 			log.error(e);
@@ -87,10 +95,10 @@ public class BatchExtractRequest {
 				}
 			}
 		}
-		return lexicalResponse;
+		return Collections.emptyList();
 	}
-	
-	public BatchExtractRequest add(Map<String, String> doc) {
+
+	public BatchExtractRequest add(LexicalDocument doc) {
 		params.add(doc);
 		return this;
 	}
