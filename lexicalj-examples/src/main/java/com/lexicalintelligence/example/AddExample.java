@@ -42,7 +42,7 @@ public class AddExample {
 		response = lexical.addEntry(new LexicalEntry().setName("Brain").setSynonym("cerebrum")).execute();
 		System.out.println(response.success());
 		
-		System.out.println(lexical.prepareExtract().setText("cacner cerebrum").execute().getEntries());
+		System.out.println(lexical.prepareExtract().setTextField("text", "cacner cerebrum").execute().getEntries());
 		
 	}
 }

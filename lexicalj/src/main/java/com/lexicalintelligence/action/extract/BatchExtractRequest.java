@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.http.HttpResponse;
@@ -40,11 +41,11 @@ import com.lexicalintelligence.LexicalEntry;
 public class BatchExtractRequest {
 	private Log log = LogFactory.getLog(BatchExtractRequest.class);
 	private static Gson gson = new GsonBuilder().create();
-	private static String PATH = "/process";
-
+	private static String PATH = "batchExtract";
+	
 	private LexicalClient client;
 	private List<Map<String, String>> params;
-
+	
 	public BatchExtractRequest(LexicalClient client) {
 		if (client == null) {
 			throw new RuntimeException();
@@ -52,7 +53,7 @@ public class BatchExtractRequest {
 		this.client = client;
 		params = new ArrayList<>();
 	}
-
+	
 	public BatchExtractResponse execute() {
 		BatchExtractResponse lexicalResponse = new BatchExtractResponse();
 		HttpPost post = new HttpPost(client.getUrl() + PATH);
@@ -63,10 +64,11 @@ public class BatchExtractRequest {
 			post.setHeader("Content-type", "application/json");
 			//post.setHeader("Accept", "application/json");
 			//post.setHeader("X-Stream", "true");
-			// System.out.println(gson.toJson(params));
+			System.out.println(gson.toJson(params));
 			//post.setEntity(new UrlEncodedFormEntity(params.values()));
 			HttpResponse response = client.getHttpClient().execute(post);
-
+			System.out.println(">> " + IOUtils.toString(response.getEntity().getContent()));
+			
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
 			Collection<List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Collection<List<LexicalEntry>>>() {
 			});
@@ -87,7 +89,7 @@ public class BatchExtractRequest {
 		}
 		return lexicalResponse;
 	}
-
+	
 	public BatchExtractRequest add(Map<String, String> doc) {
 		params.add(doc);
 		return this;

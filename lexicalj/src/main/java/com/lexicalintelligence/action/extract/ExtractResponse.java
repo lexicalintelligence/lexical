@@ -18,22 +18,34 @@ package com.lexicalintelligence.action.extract;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import com.lexicalintelligence.LexicalEntry;
 import com.lexicalintelligence.LexicalResponse;
 
 public class ExtractResponse extends LexicalResponse {
 	
-	private List<LexicalEntry> entries = Collections.emptyList();
+	private Map<String, List<LexicalEntry>> entries = Collections.emptyMap();
+	private String id = "";
 	
-	public ExtractResponse setEntries(List<LexicalEntry> entries) {
+	public ExtractResponse setEntries(Map<String, List<LexicalEntry>> entries) {
 		if (entries != null) {
 			this.entries = entries;
 		}
 		return this;
 	}
 	
-	public List<LexicalEntry> getEntries() {
+	public Map<String, List<LexicalEntry>> getEntries() {
 		return entries;
+	}
+	
+	public void setId(String id) {
+		if (id != null) {
+			this.id = id;
+		}
+	}
+	
+	public String getId() {
+		return id;
 	}
 }

@@ -40,6 +40,11 @@ public class LexicalEntry {
 	private boolean matchPunctuation = false;
 	@JsonIgnore
 	private boolean stemmed = false;
+	@JsonIgnore
+	private boolean hidden = false;
+	
+	@JsonIgnore
+	private boolean negated = false;
 	
 	public LexicalEntry() {
 		
@@ -153,4 +158,21 @@ public class LexicalEntry {
 	public void setEnd(int end) {
 		this.end = end;
 	}
+	
+	public final boolean isHidden() {
+		return hidden;
+	}
+	
+	public final void setHidden(boolean hidden) {
+		this.hidden = hidden;
+	}
+	
+	public final boolean isNegated() {
+		return negated;
+	}
+	
+	public final void setNegated(boolean negated) {
+		this.negated = negated;
+	}
+	
 }

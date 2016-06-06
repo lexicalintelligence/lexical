@@ -16,6 +16,7 @@
 
 package com.lexicalintelligence.example;
 
+import static com.lexicalintelligence.LexicalType.STOPWORD;
 import static com.lexicalintelligence.LexicalType.VERB;
 import static com.lexicalintelligence.LexicalType.WORD;
 
@@ -24,13 +25,15 @@ import com.lexicalintelligence.action.extract.ExtractResponse;
 
 public class ExtractExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:9898/ner");
+		LexicalClient lexical = new LexicalClient("http://localhost:9898/small");
 		
 		ExtractResponse extractResponse = lexical
 						.prepareExtract()
-						.setText("In Drosophila, a single GSL biosynthetic pathway is helping the activities of the Egghead and Brainiac glycosyltransferases.")
-						.include(WORD, VERB).execute();
-		extractResponse.getEntries().stream().forEach(System.out::println);
+						.addTextField("abstract",
+										"Calcimycin In Drosophila, A single GSL biosynthetic pathway IS helping the activities of the Egghead and Brainiac glycosyltransferases.")
+						.addTextField("abstract", "Calcimycin").include(WORD, VERB, STOPWORD).execute();
+		//extractResponse.getEntries().stream().forEach(System.out::println);
+		System.out.println(ExtractExample.class + "\t" + extractResponse.getEntries());
 		
 	}
 }

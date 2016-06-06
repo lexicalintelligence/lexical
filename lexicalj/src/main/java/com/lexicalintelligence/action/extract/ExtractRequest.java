@@ -20,12 +20,12 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -45,7 +45,8 @@ public class ExtractRequest {
 	private static String PATH = "/extract";
 	
 	private LexicalClient client;
-	private NameValuePair params;
+	private Map<String, List<NameValuePair>> fields;
+	//private NameValuePair params;
 	private boolean include = false;
 	private Set<String> projection;
 	
@@ -54,54 +55,49 @@ public class ExtractRequest {
 			throw new RuntimeException();
 		}
 		this.client = client;
+		fields = new HashMap<>();
 	}
 	
+	@SuppressWarnings("unchecked")
 	public ExtractResponse execute() {
-		ExtractResponse lexicalResponse = new ExtractResponse();
+		ExtractResponse extractResponse = new ExtractResponse();
 		HttpPost post = new HttpPost(client.getUrl() + PATH);
 		Reader reader = null;
 		try {
-			post.setEntity(new UrlEncodedFormEntity(Collections.singletonList(params), StandardCharsets.UTF_8));
+			List<NameValuePair> params = new ArrayList<>();
+			for (List<NameValuePair> val : fields.values()) {
+				params.addAll(val);
+			}
+			post.setEntity(new UrlEncodedFormEntity(params, StandardCharsets.UTF_8));
 			HttpResponse response = client.getHttpClient().execute(post);
 			reader = new InputStreamReader(response.getEntity().getContent(), StandardCharsets.UTF_8);
-			Map<String, List<LexicalEntry>> result = client.getObjectMapper().readValue(reader, new TypeReference<Map<String, List<LexicalEntry>>>() {
+			
+			Map<String, Object> result = client.getObjectMapper().readValue(reader, new TypeReference<Map<String, Object>>() {
 			});
 			
-			if (projection == null) {
-				lexicalResponse.setEntries(result.get("entries").stream().collect(Collectors.toList()));
-			}
-			else {
-				lexicalResponse.setEntries(result.get("entries").stream().filter(x -> {
-					//System.out.println(getClass() + "\t" + x);
+			extractResponse.setId((String) result.get("id"));
+			extractResponse.setEntries((Map<String, List<LexicalEntry>>) result.get("entries"));
+			
+			//	if (projection == null) {
+			//		
+			//		extractResponse.setEntries(result.get("entries").stream().collect(Collectors.toList()));
+			//	}
+			/*else {
+				System.out.println(result);
+				extractResponse.setEntries(result.get("text").stream().filter(x -> {
 								for (String type : x.getType()) {
 									boolean contains = projection.contains(type);
 									
 									if (contains) {
-										//System.out.println("\tcontains= " + contains + "\t" + type + "\t" + x + "\tinclude = " + include);
 										return include;
 									}
 								}
 								return !include;
-								/*
-								if (include) {
-									//System.out.println(getClass() + "\t" + x + "\tinclude\t" + type + "\tcontains\t" + contains);
-										if (!contains) {
-											return false;
-										}
-										return true;
-									}
-									else {
-										if (contains) {
-											return false;
-										}
-										return true;
-									}
-								}
-								return false;*/
 							}).collect(Collectors.toList()));
-			}
+			}*/
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			log.error(e);
 		}
 		finally {
@@ -114,12 +110,29 @@ public class ExtractRequest {
 				}
 			}
 		}
-		return lexicalResponse;
+		return extractResponse;
 	}
 	
-	public ExtractRequest setText(String text) {
-		if (text != null) {
-			params = new BasicNameValuePair("text", text);
+	public ExtractRequest setTextField(String key, String value) {
+		if (key != null && value != null) {
+			List<NameValuePair> existing = new ArrayList<>();
+			existing.add(new BasicNameValuePair(key, value));
+			fields.put(key, existing);
+		}
+		else if (value == null) {
+			fields.remove(key);
+		}
+		return this;
+	}
+	
+	public ExtractRequest addTextField(String key, String value) {
+		if (key != null && value != null) {
+			List<NameValuePair> existing = fields.get(key);
+			if (existing == null) {
+				existing = new ArrayList<>();
+				fields.put(key, existing);
+			}
+			existing.add(new BasicNameValuePair(key, value));
 		}
 		return this;
 	}

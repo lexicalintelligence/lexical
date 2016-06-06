@@ -25,22 +25,22 @@ import com.lexicalintelligence.action.extract.BatchExtractResponse;
 
 public class BatchExample {
 	public static void main(String[] args) {
-		LexicalClient lexical = new LexicalClient("http://localhost:9898/rcdc");
+		LexicalClient lexical = new LexicalClient("http://localhost:9898/small");
 		Map<String, String> doc = new HashMap<>();
 		doc.put("id", "1");
 		doc.put("title", "Effect of Carbon");
 		doc.put("text", "Carbon is known to have effects.");
-
+		
 		BatchExtractRequest request = lexical.prepareBatch();
 		request.add(doc);
-
+		
 		doc = new HashMap<>();
 		doc.put("id", "2");
 		doc.put("title", "Effect of Graphs");
 		doc.put("text", "Grapes are known to have effects.");
-
+		
 		request.add(doc);
-
+		
 		BatchExtractResponse response = request.execute();
 		response.getEntries().stream().forEach(System.out::println);
 	}
