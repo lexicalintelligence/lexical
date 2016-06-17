@@ -42,13 +42,32 @@ class LexicalQuery:
     def __init__(self):
         self.params = {}
         self.params['expandAbbreviations'] = True
-        self.params['expandCoordinations'] = True
+        self.params['expandCoordinations'] = True        
+        self.params['detectNegation'] = True
+        self.params['checkSpelling'] = True
+        self.params['showEntities'] = True
         self.params['showTokens'] = True
         self.params['showNounPhrases'] = False
         self.doc = LexicalDocument()
 
     def expandAbbreviations(self, expandAbbreviations=True):
         self.params['expandAbbreviations'] = expandAbbreviations
+        return self
+  
+    def expandCoordinations(self, expandCoordinations=True):
+        self.params['expandCoordinations'] = expandCoordinations
+        return self
+  
+    def detectNegation(self, detectNegation=True):
+        self.params['detectNegation'] = detectNegation
+        return self
+  
+    def checkSpelling(self, checkSpelling=True):
+        self.params['checkSpelling'] = checkSpelling
+        return self
+  
+    def showEntities(self, showEntities=True):
+        self.params['showEntities'] = showEntities
         return self
   
     def showTokens(self, showTokens=True):
@@ -69,7 +88,7 @@ class LexicalQuery:
 
 class LexicalClient:
     def __init__(self, url):
-        self.url=url
+        self.url = url
 	
     def process(self, query):
         data = {}
