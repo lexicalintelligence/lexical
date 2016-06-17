@@ -1,10 +1,15 @@
-import lexical as lexicalpy
+from lexical import LexicalClient, LexicalQuery
 
 if __name__ == "__main__":
-	lexical = lexicalpy.LexicalClient("https://nlp.lexicalintelligence.com/lexicon/mesh")
-	
-	entries = lexical.process("Health and happiness")
-	for entry in entries:
-		print( entry['name'] )
-		print( entry['id'] )
-		print( entry['type'] )
+    lexical = LexicalClient("http://localhost:9898/ner")
+
+    query = LexicalQuery()
+    query.showTokens(True)
+    query.addText('abstract', 'We like health and happiness.').addText('abstract', 'And fruit flies.')
+
+    response = lexical.process(query)['entries']
+
+    for field in response:
+        entries = response[field]
+        for entry in entries:
+           print(entry)
