@@ -21,8 +21,16 @@ if __name__ == "__main__":
     query.showTokens(False)
     query.addText('abstract', 'We like health and happiness.').addText('abstract', 'And fruit flies.')
 
+    responses = lexical.process_batch([ query, query, query ] )
+    responses = [ response['entries'] for response in responses ]
+    for response in responses:
+        for field in response:
+            entries = response[field]
+            for entry in entries:
+                print(entry)
+
+
     response = lexical.process(query)['entries']
-    
     for field in response:
         entries = response[field]
         for entry in entries:

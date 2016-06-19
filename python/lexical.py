@@ -22,79 +22,69 @@ import urllib.request
 import urllib.parse
 import json
 
-class LexicalDocument:
+class LexicalQuery:
     def __init__(self):
-        self.data = {}
+        self.fields = {}
+        self.fields['expandAbbreviations'] = True
+        self.fields['expandCoordinations'] = True        
+        self.fields['detectNegation'] = True
+        self.fields['checkSpelling'] = True
+        self.fields['showEntities'] = True
+        self.fields['showTokens'] = True
+        self.fields['showNounPhrases'] = False
 
-    def setText(self, field, text):
-        if field != None and text != None:
-            self.data[field] = [text]
+    def id(self, id):
+        self.fields['id'] = id
         return self
 
     def addText(self, field, text):
-        if field not in self.data:
-            self.setText(field, text)
+        if field not in self.fields:
+            self.fields[field] = [text]
         else:
-            self.data[field].append(text)
+            self.fields[field].append(text)
         return self
 
-class LexicalQuery:
-    def __init__(self):
-        self.params = {}
-        self.params['expandAbbreviations'] = True
-        self.params['expandCoordinations'] = True        
-        self.params['detectNegation'] = True
-        self.params['checkSpelling'] = True
-        self.params['showEntities'] = True
-        self.params['showTokens'] = True
-        self.params['showNounPhrases'] = False
-        self.doc = LexicalDocument()
-
     def expandAbbreviations(self, expandAbbreviations=True):
-        self.params['expandAbbreviations'] = expandAbbreviations
+        self.fields['expandAbbreviations'] = expandAbbreviations
         return self
   
     def expandCoordinations(self, expandCoordinations=True):
-        self.params['expandCoordinations'] = expandCoordinations
+        self.fields['expandCoordinations'] = expandCoordinations
         return self
   
     def detectNegation(self, detectNegation=True):
-        self.params['detectNegation'] = detectNegation
+        self.fields['detectNegation'] = detectNegation
         return self
   
     def checkSpelling(self, checkSpelling=True):
-        self.params['checkSpelling'] = checkSpelling
+        self.fields['checkSpelling'] = checkSpelling
         return self
   
     def showEntities(self, showEntities=True):
-        self.params['showEntities'] = showEntities
+        self.fields['showEntities'] = showEntities
         return self
   
     def showTokens(self, showTokens=True):
-        self.params['showTokens'] = showTokens
+        self.fields['showTokens'] = showTokens
         return self
 
     def showNounPhrases(self, showNounPhrases=True):
-        self.params['showNounPhrases'] = showNounPhrases
-        return self
-
-    def setText(self, field, text):
-        self.doc.setText(field, text)
-        return self
-
-    def addText(self, field, text):
-        self.doc.addText(field, text)
+        self.fields['showNounPhrases'] = showNounPhrases
         return self
 
 class LexicalClient:
     def __init__(self, url):
         self.url = url
-	
+
     def process(self, query):
-        data = {}
-        data.update(query.params)
-        data.update(query.doc.data)
-        data = urllib.parse.urlencode(data, True)
+        data = urllib.parse.urlencode(query.fields, True)
         req = urllib.request.Request(self.url + "/extract", data.encode('utf-8'))
         response = urllib.request.urlopen(req)
         return json.loads(response.read().decode('utf-8'))
+
+    def process_batch(self, queries):    
+        data = json.dumps([q.fields for q in queries])
+        req = urllib.request.Request(self.url + "/extract/batch", data.encode('utf-8'), {'content-type': 'application/json'})
+        response = urllib.request.urlopen(req)
+        return json.loads(response.read().decode('utf-8'))
+
